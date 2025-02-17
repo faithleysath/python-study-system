@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python练习系统 - 刷题</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/practice.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <h1><a href="/">Python学习系统</a></h1>
+        <div class="user-info">
+            <span>学号: <span id="student-id"></span></span>
+            <span>姓名: <span id="student-name"></span></span>
+            <button class="logout-btn" id="logout-btn">登出</button>
+        </div>
+    </div>
+
+    <div class="practice-container">
+        <h1 class="page-title">Python刷题</h1>
+        
+        <!-- 进度条 -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text">
+                已排除题目:<span id="excluded-count">0</span> / <span id="total-questions">0</span>
+            </div>
+        </div>
+
+        <!-- 题目卡片 -->
+        <div class="question-card">
+            <div class="question-header">
+                <div class="question-type"></div>
+                <div class="question-stats">
+                    <div class="stat-badge correct">
+                        <i class="stat-icon">✓</i>
+                        <span id="question-correct">0</span>
+                    </div>
+                    <div class="stat-badge wrong">
+                        <i class="stat-icon">✕</i>
+                        <span id="question-wrong">0</span>
+                    </div>
+                </div>
+                <div class="difficulty">
+                    <span class="difficulty-dot"></span>
+                    <span class="difficulty-dot"></span>
+                    <span class="difficulty-dot"></span>
+                </div>
+            </div>
+            
+            <div class="question-content"></div>
+
+            <!-- 选择题选项 -->
+            <div class="options" id="choice-options" style="display: none;"></div>
+
+            <!-- 判断题选项 -->
+            <div class="options" id="judge-options" style="display: none;">
+                <label class="option">
+                    <input type="radio" name="judge" value="true">
+                    <span>正确</span>
+                </label>
+                <label class="option">
+                    <input type="radio" name="judge" value="false">
+                    <span>错误</span>
+                </label>
+            </div>
+
+            <!-- 填空题输入 -->
+            <input type="text" class="blank-input" id="blank-input" style="display: none;">
+
+            <!-- 问答题输入 -->
+            <textarea class="essay-input" id="essay-input" style="display: none;" 
+                      placeholder="请输入你的答案..."></textarea>
+            
+            <div id="message" class="message"></div>
+            <!-- 提交按钮 -->
+            <button class="primary-btn submit-btn" id="submit-btn">提交答案</button>
+
+            <!-- 答题结果 -->
+            <div class="result">
+                <div class="result-text"></div>
+                <div class="explanation"></div>
+            </div>
+            <!-- 下一题按钮 -->
+            <button class="primary-btn next-btn" id="next-btn">下一题</button>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="total-count">0</div>
+                <div class="stat-label">已答题数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="correct-count">0</div>
+                <div class="stat-label">答对题数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">正确率</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/confetti.browser.min.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script>
+        // 处理登出
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('studentId');
+            window.location.href = '/login.html';
+        });
+    </script>
+    <script src="/static/js/practice.js"></script>
+
+    <!-- 页脚信息 -->
+    <footer style="text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid #eee; color: #666;">
+        <div>版权所有 © 2025 laysath（授权于西夏墅中学使用）</div>
+        <div style="margin-top: 10px;">
+            <span>负责人：吴志安</span>
+            <span style="margin-left: 20px;">联系电话：13401320595</span>
+        </div>
+        <div style="margin-top: 10px;">
+            <span>系统版本：v1.0.0</span>
+            <span style="margin-left: 20px;">开发者：laysath</span>
+        </div>
+    </footer>
+</body>
+</html>

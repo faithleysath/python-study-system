@@ -1,0 +1,640 @@
+/* 管理员登录页面样式 */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 背景圆圈装饰 */
+.circles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.circle {
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: ripple 15s linear infinite;
+}
+
+.circle:nth-child(1) {
+    width: 200px;
+    height: 200px;
+    left: -100px;
+    top: 10%;
+    animation-delay: 0s;
+    border-width: 3px;
+}
+
+.circle:nth-child(2) {
+    width: 400px;
+    height: 400px;
+    right: -200px;
+    top: 40%;
+    animation-delay: 3s;
+    border-width: 2px;
+}
+
+.circle:nth-child(3) {
+    width: 300px;
+    height: 300px;
+    right: 30%;
+    bottom: -150px;
+    animation-delay: 6s;
+    border-width: 4px;
+}
+
+.circle:nth-child(4) {
+    width: 150px;
+    height: 150px;
+    left: 30%;
+    top: 40%;
+    animation-delay: 9s;
+    border-width: 1px;
+}
+
+.circle:nth-child(5) {
+    width: 250px;
+    height: 250px;
+    left: 10%;
+    bottom: 10%;
+    animation-delay: 12s;
+    border-width: 2px;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0.8) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(0.8) rotate(360deg);
+        opacity: 0.3;
+    }
+}
+
+.login-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.system-icon {
+    font-size: 3rem;
+    color: #3498db;
+    margin-bottom: 1rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.login-header h1 {
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.login-header .subtitle {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #95a5a6;
+    transition: color 0.3s ease;
+}
+
+.input-group input {
+    padding-left: 2.8rem !important;
+}
+
+.input-group input:focus + .input-icon {
+    color: #3498db;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    background: #f8fafc;
+}
+
+.form-group input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    background: white;
+}
+
+.form-group input::placeholder {
+    color: #95a5a6;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.primary-btn:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.primary-btn:active {
+    transform: translateY(1px);
+}
+
+.message {
+    margin: 1rem 0;
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.message.error {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.message.success {
+    background: #dcfce7;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        padding: 2rem;
+    }
+
+    .login-box h1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* 管理后台布局 */
+.admin-container {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding-bottom: 2rem;
+}
+
+.admin-nav {
+    background: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.admin-nav h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.logout-btn {
+    padding: 0.5rem 1.2rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logout-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.logout-btn:active {
+    transform: translateY(1px);
+}
+
+/* 统计概览样式 */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 0 2rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.stat-card h3 {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 进度瀑布流样式 */
+.progress-container {
+    padding: 0 2rem;
+}
+
+.progress-container h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.progress-waterfall {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .progress-waterfall {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .progress-waterfall {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .progress-waterfall {
+        grid-template-columns: 1fr;
+    }
+}
+
+.progress-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 无关问题角标样式 */
+.progress-card.has-irrelevant-chats {
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+}
+
+.progress-card.has-irrelevant-chats::before {
+    content: '无关问题 > 2';
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background: #fc8181;
+    color: white;
+    padding: 4px 40px;
+    transform: rotate(45deg);
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.progress-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+}
+
+.progress-card .student-info {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.progress-card .student-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.progress-card .student-id {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.progress-card .code-status {
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #666;
+    background: #f5f5f5;
+}
+
+.progress-card .code-status.success {
+    color: #28a745;
+    background: #e8f5e9;
+}
+
+.progress-card .progress-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.progress-card .stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.progress-card .stat-value {
+    font-weight: bold;
+    color: #333;
+}
+
+/* 弹窗样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 2rem auto;
+    padding: 2rem;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 8px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.close:hover {
+    color: #333;
+}
+
+.student-info {
+    margin-bottom: 2rem;
+}
+
+.info-group {
+    margin-bottom: 0.5rem;
+}
+
+.info-group label {
+    font-weight: bold;
+    margin-right: 0.5rem;
+    color: #666;
+}
+
+.practice-stats {
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.exam-records {
+    margin-bottom: 1rem;
+}
+
+.exam-list {
+    margin-top: 1rem;
+}
+
+.exam-item {
+    background: #f8f8f8;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.exam-item .exam-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.exam-item .exam-time {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.exam-item .exam-score {
+    font-weight: bold;
+    color: #333;
+}
+
+/* 工具类 */
+.text-success {
+    color: #28a745;
+}
+
+.text-warning {
+    color: #ffc107;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.text-info {
+    color: #17a2b8;
+}
+
+/* 认证码相关样式 */
+.progress-card.has-code {
+    background: #e8f5e9;
+    border: 1px solid #81c784;
+}
+
+.info-group.success {
+    color: #28a745;
+}
+
+.info-group.success label {
+    color: #28a745;
+}
+
+/* AI权限控制按钮样式 */
+.ai-permission-control {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    background: #4CAF50;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn.disabled {
+    background: #dc3545;
+}
+
+.toggle-btn .status-text {
+    font-size: 0.9rem;
+}
+
+.toggle-btn i {
+    font-size: 1.2rem;
+}
+
+.toggle-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.toggle-btn:active {
+    transform: translateY(1px);
+}
+
+/* 考试记录项样式 */
+.exam-item {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.exam-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.exam-action {
+    margin-top: 0.5rem;
+    color: #3498db;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.exam-action i {
+    font-size: 0.8rem;
+}

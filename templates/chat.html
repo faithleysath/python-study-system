@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI问答 - Python学习系统</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/chat.css">
+    <link rel="stylesheet" href="/static/vendor/css/highlight.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <h1><a href="/">Python学习系统</a></h1>
+        <div class="user-info">
+            <span>学号: <span id="student-id"></span></span>
+            <span>姓名: <span id="student-name"></span></span>
+            <button class="logout-btn" id="logout-btn">登出</button>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 聊天区域 -->
+        <div class="chat-container">
+            <!-- 聊天记录 -->
+            <div class="chat-messages" id="chat-messages">
+                <div class="system-message">
+                    欢迎使用AI问答功能!我是你的Python学习助手,请问有什么可以帮你的吗?
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="chat-input-area">
+                <textarea 
+                    id="chat-input" 
+                    placeholder="请输入你的问题(仅限Python相关)..."
+                    rows="3"
+                ></textarea>
+                <button id="send-btn" class="primary-btn">发送</button>
+            </div>
+        </div>
+
+        <!-- 历史记录 -->
+        <div class="chat-history">
+            <h3>历史记录</h3>
+            <div class="history-list" id="history-list">
+                <!-- 历史记录将通过JavaScript动态添加 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/vendor/js/marked.min.js"></script>
+    <script src="/static/vendor/js/highlight.min.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/chat.js"></script>
+</body>
+</html>

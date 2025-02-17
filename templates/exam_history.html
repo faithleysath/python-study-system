@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史测验 - Python学习系统</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/exam_history.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <h1><a href="/">Python学习系统</a></h1>
+        <div class="user-info">
+            <span>学号: <span id="student-id"></span></span>
+            <span>姓名: <span id="student-name"></span></span>
+            <button class="logout-btn" id="logout-btn">登出</button>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <div class="header-section">
+            <h2>历史测验记录</h2>
+            <a href="/" class="back-btn">返回首页</a>
+        </div>
+
+        <!-- 测验列表 -->
+        <div class="exam-list" id="exam-list">
+            <!-- 测验记录将通过JS动态添加 -->
+        </div>
+
+        <!-- 测验详情模态框 -->
+        <div class="modal" id="exam-detail-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>测验详情</h3>
+                    <button class="close-btn" id="close-modal-btn">&times;</button>
+                </div>
+                <div class="modal-body" id="exam-detail-content">
+                    <!-- 测验详情将通过JS动态添加 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/exam_history.js"></script>
+
+    <!-- 页脚信息 -->
+    <footer style="text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid #eee; color: #666;">
+        <div>版权所有 © 2025 laysath（授权于西夏墅中学使用）</div>
+        <div style="margin-top: 10px;">
+            <span>负责人：吴志安</span>
+            <span style="margin-left: 20px;">联系电话：13401320595</span>
+        </div>
+        <div style="margin-top: 10px;">
+            <span>系统版本：v1.0.0</span>
+            <span style="margin-left: 20px;">开发者：laysath</span>
+        </div>
+    </footer>
+</body>
+</html>

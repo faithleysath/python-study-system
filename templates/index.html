@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python学习系统</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <h1><a href="/">Python学习系统</a></h1>
+        <div class="user-info">
+            <span>学号: <span id="student-id"></span></span>
+            <span>姓名: <span id="student-name"></span></span>
+            <button class="logout-btn" id="logout-btn">登出</button>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <!-- 欢迎信息 -->
+        <div class="welcome-section">
+            <h2>欢迎使用Python学习系统</h2>
+            <p>选择下方功能开始你的Python学习之旅</p>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats-section">
+            <h3>学习统计</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-questions">0</div>
+                    <div class="stat-label">已答题数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="correct-rate">0%</div>
+                    <div class="stat-label">正确率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="today-code"></div>
+                    <div class="stat-label">今日认证码</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能卡片 -->
+        <div class="features-grid">
+            <!-- 刷题功能 -->
+            <div class="feature-card">
+                <h3>Python刷题</h3>
+                <p>随机抽题练习,巩固Python基础知识</p>
+                <button class="primary-btn" onclick="window.location.href='/practice'">开始刷题</button>
+            </div>
+
+            <!-- 测试功能 -->
+            <div class="feature-card">
+                <h3>Python测试</h3>
+                <p>参加测试,获取上网认证码</p>
+                <button class="primary-btn" onclick="window.location.href='/exam'">开始测试</button>
+            </div>
+
+            <!-- 历史测验 -->
+            <div class="feature-card">
+                <h3>历史测验</h3>
+                <p>查看历史测验记录和答题情况</p>
+                <button class="primary-btn" onclick="window.location.href='/exam/history'">查看历史</button>
+            </div>
+
+            <!-- AI问答 -->
+            <div class="feature-card" id="ai-chat-card">
+                <h3>AI问答</h3>
+                <p>与AI助手交流,解答Python相关问题</p>
+                <button class="primary-btn" onclick="window.location.href='/chat'" id="chat-btn">开始对话</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/index.js"></script>
+
+    <!-- 页脚信息 -->
+    <footer style="text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid #eee; color: #666;">
+        <div>版权所有 © 2025 laysath（授权于西夏墅中学使用）</div>
+        <div style="margin-top: 10px;">
+            <span>负责人：吴志安</span>
+            <span style="margin-left: 20px;">联系电话：13401320595</span>
+        </div>
+        <div style="margin-top: 10px;">
+            <span>系统版本：v1.0.0</span>
+            <span style="margin-left: 20px;">开发者：laysath</span>
+        </div>
+    </footer>
+</body>
+</html>

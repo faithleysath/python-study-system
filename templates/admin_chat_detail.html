@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问答记录 - Python学习系统管理后台</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/admin_chat_detail.css">
+    <link rel="stylesheet" href="/static/vendor/css/font-awesome.min.css">
+    <!-- 添加代码高亮样式 -->
+    <link rel="stylesheet" href="/static/vendor/css/highlight.min.css">
+    <!-- 添加代码字体 -->
+    <link rel="stylesheet" href="/static/vendor/fonts/fira-code.css">
+    <!-- 添加Markdown渲染库 -->
+    <script src="/static/vendor/js/marked.min.js"></script>
+</head>
+<body>
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <a href="javascript:window.close()" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            返回学生详情
+        </a>
+
+        <!-- 问答记录头部 -->
+        <div class="exam-header">
+            <h2>问答记录</h2>
+            <div class="exam-info">
+                <div class="info-item">
+                    <span class="info-label" >学生</span>
+                    <span class="info-value" id="studentname">{{ student_name }} ({{ student_id }})</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">总提问数</span>
+                    <span class="info-value">{{ total_chats }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">无关问题数</span>
+                    <span class="info-value">{{ irrelevant_chats }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 问答记录列表 -->
+        <div class="question-list">
+            {% for chat in chats %}
+            <div class="question-card">
+                <div class="question-header">
+                    <div class="question-info">
+                        <h4>问答记录 #{{ chat.id }}</h4>
+                        <span class="chat-time">{{ chat.chat_time }}</span>
+                    </div>
+                    <div class="relevance-toggle">
+                        <label class="switch">
+                            <input type="checkbox" 
+                                   {{ 'checked' if chat.is_irrelevant }}
+                                   onchange="toggleRelevance('{{ chat.id }}', this)">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label">标记为无关问题</span>
+                    </div>
+                </div>
+                <div class="chat-content">
+                    <div class="question-section">
+                        <span class="badge question-badge">问题</span>
+                        <div class="question-text">{{ chat.question }}</div>
+                    </div>
+                    <div class="answer-section">
+                        <span class="badge answer-badge">回答</span>
+                        <div class="answer-text">{{ chat.answer }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="/static/js/api.js"></script>
+    <!-- 添加代码高亮库 -->
+    <script src="/static/vendor/js/highlight.min.js"></script>
+    <script>
+        // 配置marked选项
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true,
+            gfm: true
+        });
+
+        // 渲染所有回答内容
+        document.addEventListener('DOMContentLoaded', function() {
+            const answerElements = document.querySelectorAll('.answer-text');
+            answerElements.forEach(element => {
+                const originalText = element.textContent;
+                element.innerHTML = marked.parse(originalText);
+            });
+
+            // 初始化代码高亮
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+        });
+
+        // 登出功能
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+        });
+
+        // 切换问题相关性
+        async function toggleRelevance(chatId, checkbox) {
+            try {
+                const token = localStorage.getItem('adminToken');
+                const response = await fetch(`/api/admin/chat/${chatId}/toggle-relevance`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('切换问题相关性失败');
+                    checkbox.checked = !checkbox.checked; // 恢复原状态
+                }
+            } catch (error) {
+                console.error('切换问题相关性失败:', error);
+                alert('操作失败,请重试');
+                checkbox.checked = !checkbox.checked; // 恢复原状态
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+/* 顶部导航栏 */
+.admin-nav {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-nav h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+/* 主要内容区域 */
+.main-content {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 考试信息头部 */
+.exam-header {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.exam-header h2 {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.exam-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.3rem;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 题目列表 */
+.question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* 题目卡片 */
+.question-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.question-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.question-type {
+    background-color: #e9ecef;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.question-content {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+/* 选项样式 */
+.options-group {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.option-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.option-row input[type="radio"],
+.option-row input[type="checkbox"] {
+    margin-right: 0.75rem;
+}
+
+.option-row label {
+    flex: 1;
+    margin-bottom: 0;
+    cursor: default;
+}
+
+/* 多选题答案状态 */
+.option-row input[type="checkbox"].correct-selected,
+.option-row input[type="checkbox"] ~ label.correct-selected,
+.options-group:has(input[type="checkbox"]) .option-row.correct-selected {
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+}
+
+/* 单选题答案状态 */
+.options-group:has(input[type="radio"]) .option-row.correct-selected {
+    background-color: rgba(30, 126, 52, 0.1);
+    border: 1px solid #1e7e34;
+}
+
+.option-row.wrong-selected {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid #dc3545;
+}
+
+.option-row.missed-correct {
+    background-color: rgba(30, 126, 52, 0.1);
+    border: 1px solid #1e7e34;
+}
+
+/* 其他题型的答案状态 */
+.option-row.correct-answer {
+    background-color: rgba(30, 126, 52, 0.1);
+    border: 1px solid #1e7e34;
+}
+
+.option-row.student-answer {
+    background-color: rgba(0, 123, 255, 0.1);
+    border: 1px solid #007bff;
+}
+
+.option-row.correct-answer.student-answer {
+    background-color: rgba(30, 126, 52, 0.1);
+    border: 1px solid #1e7e34;
+}
+
+/* 文本答案样式 */
+.text-answer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.answer-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.answer-label {
+    min-width: 80px;
+    color: #666;
+}
+
+.answer-row input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+/* 题目解析 */
+.question-explanation {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    color: #666;
+}
+
+/* 返回按钮 */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.back-btn:hover {
+    background-color: #5a6268;
+}
+
+/* 状态标签 */
+.status-correct {
+    color: #28a745;
+}
+
+.status-wrong {
+    color: #dc3545;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .exam-header {
+        padding: 1rem;
+    }
+    
+    .exam-info {
+        grid-template-columns: 1fr;
+    }
+}

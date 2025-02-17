@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考试详情 - Python学习系统管理后台</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/admin_exam_detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="admin-nav">
+        <h1>Python学习系统 - 管理后台</h1>
+        <button id="logout-btn" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            登出
+        </button>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+        <a href="javascript:window.close()" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            返回学生详情
+        </a>
+
+        <!-- 考试信息头部 -->
+        <div class="exam-header">
+            <h2>考试详情</h2>
+            <div class="exam-info">
+                <div class="info-item">
+                    <span class="info-label">学生</span>
+                    <span class="info-value">{{ student_name }} ({{ student_id }})</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">考试时间</span>
+                    <span class="info-value">{{ start_time }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">题目数量</span>
+                    <span class="info-value">{{ question_count }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">正确数量</span>
+                    <span class="info-value">{{ correct_count }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">得分</span>
+                    <span class="info-value">{{ score }}分</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 题目列表 -->
+        <div class="question-list">
+            {% for question in questions %}
+            <div class="question-card">
+                <div class="question-header">
+                    <div class="question-info">
+                        <h4>第{{ loop.index }}题</h4>
+                        <span class="question-type">
+                            {% if question.type == 'single' %}
+                                单选题
+                            {% elif question.type == 'multiple' %}
+                                多选题
+                            {% elif question.type == 'judge' %}
+                                判断题
+                            {% elif question.type == 'blank' %}
+                                填空题
+                            {% else %}
+                                问答题
+                            {% endif %}
+                        </span>
+                    </div>
+                    <span class="question-status status-{{ 'correct' if question.is_correct else 'wrong' }}">
+                        {{ '正确' if question.is_correct else '错误' }}
+                    </span>
+                </div>
+                <div class="question-content">{{ question.content }}</div>
+                <div class="answer-section">
+                    {% if question.type == 'single' or question.type == 'multiple' %}
+                        <div class="options-group">
+                            {% for option in question.options %}
+                            {% set letter = chr(65 + loop.index0) %}
+                            {% set is_student_answer = letter in question.student_answer if question.type == 'multiple' else letter == question.student_answer %}
+                            {% set is_correct_answer = letter in question.answer if question.type == 'multiple' else letter == question.answer %}
+                            <div class="option-row 
+                                {{ 'correct-selected' if is_student_answer and is_correct_answer }}
+                                {{ 'wrong-selected' if is_student_answer and not is_correct_answer }}
+                                {{ 'missed-correct' if not is_student_answer and is_correct_answer }}">
+                                <input type="{{ 'checkbox' if question.type == 'multiple' else 'radio' }}" 
+                                    name="q{{ loop.index }}" 
+                                    value="{{ letter }}"
+                                    {{ 'checked' if is_student_answer else '' }}
+                                    disabled>
+                                <label>{{ letter }}. {{ option | replace(letter + '.', '') | trim }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% elif question.type == 'judge' %}
+                        <div class="options-group">
+                            <div class="option-row 
+                                {{ 'correct-selected' if question.student_answer == true and question.answer == true }}
+                                {{ 'wrong-selected' if question.student_answer == true and question.answer == false }}
+                                {{ 'missed-correct' if question.student_answer != true and question.answer == true }}">
+                                <input type="radio" 
+                                    name="q{{ loop.index }}" 
+                                    value="true"
+                                    {{ 'checked' if question.student_answer == true else '' }}
+                                    disabled>
+                                <label>正确</label>
+                            </div>
+                            <div class="option-row 
+                                {{ 'correct-selected' if question.student_answer == false and question.answer == false }}
+                                {{ 'wrong-selected' if question.student_answer == false and question.answer == true }}
+                                {{ 'missed-correct' if question.student_answer != false and question.answer == false }}">
+                                <input type="radio" 
+                                    name="q{{ loop.index }}" 
+                                    value="false"
+                                    {{ 'checked' if question.student_answer == false else '' }}
+                                    disabled>
+                                <label>错误</label>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-answer">
+                            <div class="answer-row">
+                                <span class="answer-label">学生答案:</span>
+                                <input type="text" value="{{ question.student_answer }}" readonly>
+                            </div>
+                            <div class="answer-row">
+                                <span class="answer-label">正确答案:</span>
+                                <input type="text" value="{{ question.answer }}" readonly>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if question.explanation %}
+                <div class="question-explanation">
+                    <strong>解析:</strong> {{ question.explanation }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="/static/js/api.js"></script>
+    <script>
+        // 登出功能
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+        });
+    </script>
+</body>
+</html>

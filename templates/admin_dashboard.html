@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - Python学习系统</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <link rel="stylesheet" href="/static/vendor/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 顶部导航栏 -->
+        <nav class="admin-nav">
+            <h1>Python学习系统 - 管理后台</h1>
+            <button id="logout-btn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                登出
+            </button>
+        </nav>
+
+        <!-- 统计概览 -->
+        <div class="stats-overview">
+            <!-- 用户统计 -->
+            <div class="stat-card">
+                <h3>总用户数</h3>
+                <div class="stat-value" id="total-users">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日活跃</h3>
+                <div class="stat-value" id="active-users">0</div>
+            </div>
+
+            <!-- 练习统计 -->
+            <div class="stat-card">
+                <h3>总答题数</h3>
+                <div class="stat-value" id="total-answers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日答题</h3>
+                <div class="stat-value" id="today-answers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>总正确率</h3>
+                <div class="stat-value" id="accuracy">0%</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日正确率</h3>
+                <div class="stat-value" id="today-accuracy">0%</div>
+            </div>
+
+            <!-- 考试统计 -->
+            <div class="stat-card">
+                <h3>总考试数</h3>
+                <div class="stat-value" id="total-exams">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日考试</h3>
+                <div class="stat-value" id="today-exams">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>总平均分</h3>
+                <div class="stat-value" id="avg-score">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日平均分</h3>
+                <div class="stat-value" id="today-avg-score">0</div>
+            </div>
+
+            <!-- 认证统计 -->
+            <div class="stat-card">
+                <h3>总认证数</h3>
+                <div class="stat-value" id="total-codes">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日认证</h3>
+                <div class="stat-value" id="today-code-users">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>剩余认证码</h3>
+                <div class="stat-value" id="remaining-codes">0</div>
+            </div>
+
+            <!-- 问答统计 -->
+            <div class="stat-card">
+                <h3>总提问数</h3>
+                <div class="stat-value" id="total-chats">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日提问</h3>
+                <div class="stat-value" id="today-chats">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>总无关数</h3>
+                <div class="stat-value" id="irrelevant-chats">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日无关</h3>
+                <div class="stat-value" id="today-irrelevant-chats">0</div>
+            </div>
+        </div>
+
+        <!-- 学生进度瀑布流 -->
+        <div class="progress-container">
+            <h2>学生进度</h2>
+            <div class="progress-waterfall" id="progress-waterfall">
+                <!-- 进度卡片将通过JavaScript动态添加 -->
+            </div>
+        </div>
+
+        <!-- 学生详情弹窗 -->
+        <div class="modal" id="student-modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>学生详情</h2>
+                <div class="student-info">
+                    <div class="info-group">
+                        <label>学号:</label>
+                        <span id="detail-student-id"></span>
+                    </div>
+                    <div class="info-group">
+                        <label>姓名:</label>
+                        <span id="detail-name"></span>
+                    </div>
+                    <div class="info-group">
+                        <label>IP地址:</label>
+                        <span id="detail-ip"></span>
+                    </div>
+                    <div class="info-group">
+                        <label>绑定时间:</label>
+                        <span id="detail-bound-time"></span>
+                    </div>
+                    <div class="info-group">
+                        <label>AI权限:</label>
+                        <div class="ai-permission-control">
+                            <button id="ai-permission-btn" class="toggle-btn">
+                                <span class="status-text">已启用</span>
+                                <i class="fas fa-toggle-on"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="practice-stats">
+                    <h3>练习统计</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">总题数</div>
+                            <div class="stat-value" id="detail-total-questions">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">正确数</div>
+                            <div class="stat-value" id="detail-correct-questions">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">正确率</div>
+                            <div class="stat-value" id="detail-accuracy">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="exam-records">
+                    <h3>考试记录</h3>
+                    <div class="exam-list" id="exam-list">
+                        <!-- 考试记录将通过JavaScript动态添加 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/admin_dashboard.js"></script>
+</body>
+</html>

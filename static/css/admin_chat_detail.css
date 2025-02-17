@@ -1,0 +1,263 @@
+/* 主要内容区域 */
+.main-content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 返回按钮 */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(145deg, #3498db, #2980b9);
+    color: white;
+    text-decoration: none;
+    margin-bottom: 20px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 3px 3px 6px rgba(41, 128, 185, 0.3), -3px -3px 6px rgba(52, 152, 219, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-btn:hover {
+    background: linear-gradient(145deg, #2980b9, #3498db);
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 8px rgba(41, 128, 185, 0.4), -4px -4px 8px rgba(52, 152, 219, 0.2);
+    color: white;
+}
+
+.back-btn:active {
+    transform: translateY(0);
+    box-shadow: inset 2px 2px 5px rgba(41, 128, 185, 0.4), inset -2px -2px 5px rgba(52, 152, 219, 0.2);
+}
+
+.back-btn i {
+    margin-right: 10px;
+    font-size: 1.1em;
+    transition: transform 0.3s ease;
+}
+
+.back-btn:hover i {
+    transform: translateX(-3px);
+}
+
+/* 问答记录头部 */
+.exam-header {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.exam-header h2 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.exam-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    text-align: center;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+}
+
+.info-label {
+    font-size: 0.9em;
+    color: #666;
+    font-weight: normal;
+}
+
+.info-value {
+    font-size: 1.5em;
+    color: #2c3e50;
+    font-weight: 600;
+    line-height: 1;
+}
+
+#studentname {
+    font-size: 1.3em;
+    color: #2c3e50;
+    line-height: 1;
+}
+
+/* 问答记录卡片样式 */
+.question-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 无关问题卡片样式 */
+.question-card:has(input:checked) {
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+}
+
+.question-card:has(input:checked)::before {
+    content: '无关问题';
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background: #fc8181;
+    color: white;
+    padding: 4px 40px;
+    transform: rotate(45deg);
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.question-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.question-info h4 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.chat-time {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+    display: block;
+}
+
+/* 聊天内容样式 */
+.chat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* 问题和回答区域样式 */
+.question-section, .answer-section {
+    padding: 1.2rem;
+    border-radius: 8px;
+    position: relative;
+}
+
+.question-section {
+    background: #f8f9fa;
+    border-left: 4px solid #e74c3c;
+}
+
+.answer-section {
+    background: #f0f7ff;
+    border-left: 4px solid #3498db;
+}
+
+/* 徽章样式 */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+    color: white;
+}
+
+.question-badge {
+    background: #e74c3c;
+}
+
+.answer-badge {
+    background: #3498db;
+}
+
+.question-text, .answer-text {
+    color: #34495e;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* 代码高亮样式 */
+pre {
+    background: #282c34;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    overflow-x: auto;
+}
+
+code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+}
+
+/* Markdown 渲染样式 */
+.answer-text {
+    overflow-wrap: break-word;
+}
+
+.answer-text h1, .answer-text h2, .answer-text h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.answer-text p {
+    margin: 1rem 0;
+}
+
+.answer-text ul, .answer-text ol {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+}
+
+.answer-text blockquote {
+    border-left: 4px solid #3498db;
+    margin: 1rem 0;
+    padding-left: 1rem;
+    color: #7f8c8d;
+}
+
+.answer-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+/* 相关性开关样式优化 */
+.relevance-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+}
+
+.toggle-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+}

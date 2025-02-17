@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python在线考试</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/exam.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+        <h1><a href="/">Python学习系统</a></h1>
+        <div class="user-info">
+            <span>学号: <span id="student-id"></span></span>
+            <span>姓名: <span id="student-name"></span></span>
+            <button class="logout-btn" id="logout-btn">登出</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- 考试准备页面 -->
+        <div id="exam-prep" class="exam-section">
+            <h2>考试须知</h2>
+            <div class="exam-rules">
+                <p>1. 本次考试从您<span id="question-range-days">7</span>天内做对的题目中随机抽取<span class="total-questions">10</span>道题目</p>
+                <p>2. 考试时长为<span id="exam-duration">30</span>分钟,超时将自动提交</p>
+                <p>3. 考试过程中请勿刷新页面或关闭浏览器</p>
+                <p>4. 考试开始后不能中途暂停</p>
+                <p>5. 请确保网络环境稳定</p>
+                <p>6. 考试成绩达到<span id="pass-score">60</span>分即可领取上网认证码</p>
+            </div>
+            <div class="exam-status">
+                <p>您<span id="question-range-days-2">7</span>天内做对的题目数量: <span id="correct-count">0</span>题</p>
+                <p>开始考试需要至少做对: <span id="required-count">10</span>题</p>
+            </div>
+            <button id="start-exam" class="primary-btn" disabled>开始考试</button>
+            <p id="start-message" class="message"></p>
+        </div>
+
+        <!-- 考试页面 -->
+        <div id="exam-main" class="exam-section" style="display: none;">
+            <div class="exam-header">
+                <div class="exam-progress">
+                    <span>进度: </span>
+                    <span id="current-question">0</span>
+                    <span>/</span>
+                    <span class="total-questions">10</span>
+                </div>
+                <div class="exam-timer">
+                    剩余时间: <span id="timer">30:00</span>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <div class="question-header">
+                    <div class="question-info">
+                        <div class="question-type"></div>
+                    </div>
+                    <div class="difficulty">
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                    </div>
+                </div>
+                <div class="question-content"></div>
+                
+                <!-- 选择题选项 -->
+                <div id="choice-options" class="options-container"></div>
+                
+                <!-- 判断题选项 -->
+                <div id="judge-options" class="options-container">
+                    <label class="option">
+                        <input type="radio" name="judge" value="true">
+                        <span>正确</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="judge" value="false">
+                        <span>错误</span>
+                    </label>
+                </div>
+                
+                <!-- 填空题输入 -->
+                <input type="text" id="blank-input" class="answer-input" placeholder="请输入答案">
+                
+                <!-- 问答题输入 -->
+                <textarea id="essay-input" class="answer-input" placeholder="请输入答案"></textarea>
+            </div>
+
+            <div class="result" style="display: none;">
+                <div class="result-text"></div>
+                <div class="explanation"></div>
+            </div>
+
+            <div class="exam-actions">
+            <button id="submit-btn" class="primary-btn">提交答案</button>
+            <button id="next-btn" class="primary-btn" style="display: none;">下一题</button>
+            </div>
+        </div>
+
+        <!-- 考试完成页面 -->
+        <div id="exam-complete" class="exam-section" style="display: none;">
+            <h2>考试完成!</h2>
+            <div class="exam-result">
+                <div class="result-summary">
+                    <p>总题数: <span id="final-total">10</span></p>
+                    <p>正确题数: <span id="final-correct">0</span></p>
+                    <p>正确率: <span id="final-accuracy">0%</span></p>
+                </div>
+                <!-- 题目详细结果将在这里动态插入 -->
+            </div>
+            <button onclick="window.location.href='/'" class="primary-btn">返回首页</button>
+        </div>
+    </div>
+
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/exam.js"></script>
+
+    <!-- 页脚信息 -->
+    <footer style="text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid #eee; color: #666;">
+        <div>版权所有 © 2025 laysath（授权于西夏墅中学使用）</div>
+        <div style="margin-top: 10px;">
+            <span>负责人：吴志安</span>
+            <span style="margin-left: 20px;">联系电话：13401320595</span>
+        </div>
+        <div style="margin-top: 10px;">
+            <span>系统版本：v1.0.0</span>
+            <span style="margin-left: 20px;">开发者：laysath</span>
+        </div>
+    </footer>
+</body>
+</html>
