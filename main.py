@@ -12,7 +12,9 @@ default_json = """
         "pool_timeout": 60
     },
     "deepseek": {
-        "api_key": "sk-esadasdfsdf"
+        "api_key": "sk-esadasdfsdf",
+        "base_url": "https://api.deepseek.com",
+        "model": "deepseek-chat"
     },
     "features": {
         "enable_exam": false,

@@ -7,6 +7,8 @@ class Config(QConfig):
     
     # DeepSeek配置
     deepseekApiKey = ConfigItem("deepseek", "api_key", "")
+    deepseekBaseUrl = ConfigItem("deepseek", "base_url", "https://api.deepseek.com")
+    deepseekModel = ConfigItem("deepseek", "model", "deepseek-chat")
     
     # Token配置
     tokenExpireMinutes = ConfigItem("token", "expire_minutes", 300)

@@ -370,6 +370,18 @@ class AdvancedSettingCard(ExpandGroupSettingCard):
         self.apiKeyEdit.setText(cfg.deepseekApiKey.value)
         self.apiKeyEdit.setFixedWidth(250)
         self.apiKeyEdit.textChanged.connect(lambda v: self._updateConfig(cfg.deepseekApiKey, v))
+
+        self.baseUrlLabel = BodyLabel("DeepSeek Base URL")
+        self.baseUrlEdit = LineEdit()
+        self.baseUrlEdit.setText(cfg.deepseekBaseUrl.value)
+        self.baseUrlEdit.setFixedWidth(250)
+        self.baseUrlEdit.textChanged.connect(lambda v: self._updateConfig(cfg.deepseekBaseUrl, v))
+
+        self.modelLabel = BodyLabel("DeepSeek 模型")
+        self.modelEdit = LineEdit()
+        self.modelEdit.setText(cfg.deepseekModel.value)
+        self.modelEdit.setFixedWidth(250)
+        self.modelEdit.textChanged.connect(lambda v: self._updateConfig(cfg.deepseekModel, v))
         
         # 速率限制设置组
         self.rateLimitLabel = BodyLabel("请求速率限制（次/窗口）")
@@ -393,6 +405,8 @@ class AdvancedSettingCard(ExpandGroupSettingCard):
         self.add(self.dbMaxOverflowLabel, self.dbMaxOverflowBox)
         self.add(self.dbTimeoutLabel, self.dbTimeoutBox)
         self.add(self.apiKeyLabel, self.apiKeyEdit)
+        self.add(self.baseUrlLabel, self.baseUrlEdit)
+        self.add(self.modelLabel, self.modelEdit)
         self.add(self.rateLimitLabel, self.rateLimitBox)
         self.add(self.windowSizeLabel, self.windowSizeBox)
 

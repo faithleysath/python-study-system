@@ -37,6 +37,8 @@ class Config:
             # DeepSeek配置
             deepseek = config_data.get('deepseek', {})
             self._deepseek_api_key = deepseek.get('api_key', "")
+            self._deepseek_base_url = deepseek.get('base_url', "https://api.deepseek.com")
+            self._deepseek_model = deepseek.get('model', "deepseek-chat")
             
             # Token配置
             token = config_data.get('token', {})
@@ -162,6 +164,16 @@ class Config:
     def deepseek_api_key(self) -> Optional[str]:
         """获取DeepSeek API密钥"""
         return self._deepseek_api_key
+
+    @property
+    def deepseek_base_url(self) -> str:
+        """获取DeepSeek base URL"""
+        return self._deepseek_base_url
+
+    @property
+    def deepseek_model(self) -> str:
+        """获取DeepSeek 模型名称"""
+        return self._deepseek_model
         
     @property
     def rate_limit_max_requests(self) -> int:

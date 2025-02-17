@@ -1024,7 +1024,7 @@ class AIGenerateThread(QThread):
             # 创建OpenAI客户端
             client = OpenAI(
                 api_key=api_key,
-                base_url="https://api.deepseek.com"
+                base_url=cfg.deepseekBaseUrl.value
             )
             
             # 系统提示词
@@ -1098,7 +1098,7 @@ class AIGenerateThread(QThread):
             
             # 发送请求
             response = client.chat.completions.create(
-                model="deepseek-chat",
+                model=cfg.deepseekModel.value,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": self.text}
@@ -1155,7 +1155,7 @@ class AIBatchImportDialog(MessageBoxBase):
         
         # 创建文本输入框
         self.textEdit = TextEdit(self)
-        self.textEdit.setPlaceholderText("请输入多道题目，例如：\n\n1. 什么是Python的GIL?\nPython的全局解释器锁(GIL)是一个互斥锁，用于限制同一时刻只有一个线程可以执行Python字节码。\n\n2. 什么是线程安全？\n线程安全是指在多线程环境下，对共享资源进行操作时不会出现数据不一致或数据污染的情况。")
+        self.textEdit.setPlaceholderText("请输入多道题目，任意格式均可，只要人能理解，ai就能理解。甚至只用输入题面和选项，ai就能自动生成答案和解析。")
         self.textEdit.setMinimumHeight(400)
         
         # 添加生成按钮
@@ -1227,7 +1227,7 @@ class AIBatchImportDialog(MessageBoxBase):
         self.modeLabel.setText("请输入题目文本（每道题之间用空行分隔）:")
         self.textEdit.setReadOnly(False)
         self.textEdit.clear()
-        self.textEdit.setPlaceholderText("请输入多道题目，例如：\n\n1. 什么是Python的GIL?\nPython的全局解释器锁(GIL)是一个互斥锁，用于限制同一时刻只有一个线程可以执行Python字节码。\n\n2. 什么是线程安全？\n线程安全是指在多线程环境下，对共享资源进行操作时不会出现数据不一致或数据污染的情况。")
+        self.textEdit.setPlaceholderText("请输入多道题目，任意格式均可，只要人能理解，ai就能理解。甚至只用输入题面和选项，ai就能自动生成答案和解析。")
         
         # 更新按钮状态
         self.generateButton.show()
@@ -1300,7 +1300,7 @@ class AIImportDialog(MessageBoxBase):
         
         # 创建文本输入框
         self.textEdit = TextEdit(self)
-        self.textEdit.setPlaceholderText("请输入题目文本，例如：\n1. 什么是Python的GIL? Python的全局解释器锁(GIL)是一个互斥锁，用于限制同一时刻只有一个线程可以执行Python字节码。")
+        self.textEdit.setPlaceholderText("请输入题目，任意格式均可，只要人能理解，ai就能理解。甚至只用输入题面和选项，ai就能自动生成答案和解析。")
         self.textEdit.setMinimumHeight(300)
         
         # 添加生成按钮
@@ -1367,7 +1367,7 @@ class AIImportDialog(MessageBoxBase):
         self.modeLabel.setText("请输入题目文本:")
         self.textEdit.setReadOnly(False)
         self.textEdit.clear()
-        self.textEdit.setPlaceholderText("请输入题目文本，例如：\n1. 什么是Python的GIL? Python的全局解释器锁(GIL)是一个互斥锁，用于限制同一时刻只有一个线程可以执行Python字节码。")
+        self.textEdit.setPlaceholderText("请输入题目，任意格式均可，只要人能理解，ai就能理解。甚至只用输入题面和选项，ai就能自动生成答案和解析。")
         
         # 更新按钮状态
         self.generateButton.show()

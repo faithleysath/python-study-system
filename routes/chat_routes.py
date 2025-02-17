@@ -51,10 +51,10 @@ async def generate_stream(messages: list) -> AsyncGenerator[str, None]:
     # 创建DeepSeek客户端
     client = AsyncOpenAI(
         api_key=config.deepseek_api_key,
-        base_url="https://api.deepseek.com"
+        base_url=config.deepseek_base_url
     )
     stream = await client.chat.completions.create(
-        model="deepseek-chat",
+        model=config.deepseek_model,
         messages=messages,
         temperature=0.7,
         max_tokens=2000,
@@ -70,10 +70,10 @@ async def check_relevance(question: str) -> bool:
         # 创建DeepSeek客户端
         client = AsyncOpenAI(
             api_key=config.deepseek_api_key,
-            base_url="https://api.deepseek.com"
+            base_url=config.deepseek_base_url
         )
         response = await client.chat.completions.create(
-            model="deepseek-chat",
+            model=config.deepseek_model,
             messages=[
                 {"role": "system", "content": RELEVANCE_PROMPT},
                 {"role": "user", "content": question}
