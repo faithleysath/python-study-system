@@ -342,6 +342,32 @@ class DatabaseInterface(QFrame):
         
         if dialog.exec():
             self.delete_user(student_id)
+            
+    def delete_user(self, student_id: str):
+        """删除用户"""
+        try:
+            from db import delete_user
+            success = delete_user(student_id)
+            if success:
+                InfoBar.success(
+                    title='成功',
+                    content=f'已删除用户 {student_id}',
+                    parent=self
+                ).show()
+                # 刷新数据
+                self.refresh_data()
+            else:
+                InfoBar.error(
+                    title='错误',
+                    content=f'删除用户失败',
+                    parent=self
+                ).show()
+        except Exception as e:
+            InfoBar.error(
+                title='错误',
+                content=f'删除用户失败: {str(e)}',
+                parent=self
+            ).show()
     
     def batch_unbind_ip(self):
         """批量解绑IP"""
