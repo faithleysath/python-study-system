@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from functools import wraps
+from typing import Tuple
 
 from fastapi import Request, HTTPException
 from fastapi.responses import RedirectResponse
@@ -21,7 +22,7 @@ SECRET_KEY = config.secret_key
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = config.token_expire_minutes
 
-async def verify_user_ip(student_id: str, request: Request) -> tuple[bool, str]:
+async def verify_user_ip(student_id: str, request: Request) -> Tuple[bool, str]:
     """验证用户IP地址
     
     Returns:

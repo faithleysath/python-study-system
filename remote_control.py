@@ -1,6 +1,7 @@
 import json
 import ssl
 from contextlib import asynccontextmanager
+from typing import Tuple
 from urllib.request import urlopen, Request as UrlRequest
 from urllib.parse import urlencode, urlparse
 from dns import resolver
@@ -165,7 +166,7 @@ def get_doh_servers():
     
     return trusted_servers
 
-def resolve_domain(domain: str) -> tuple[str, bool]:
+def resolve_domain(domain: str) -> Tuple[str, bool]:
     """使用DoH或普通DNS解析域名，返回(IP, is_ipv6)元组
     
     安全性说明：
