@@ -5,10 +5,24 @@ from qfluentwidgets import (SubtitleLabel, FluentIcon, PushButton, InfoBar, Body
                            ComboBox, TableWidget, TransparentToolButton,
                            MessageBoxBase, LineEdit, TextEdit,
                            SpinBox, RadioButton, CheckBox, PrimarySplitPushButton,
-                           RoundMenu, Action, SwitchButton, TransparentToggleToolButton)
+                           RoundMenu, Action, SwitchButton, TransparentToggleToolButton,
+                           CardWidget, FlowLayout)
 
 from questions import get_question_by_id, update_question, load_questions, delete_question
 import json
+
+class StatisticsCard(CardWidget):
+    def __init__(self, title: str, parent=None):
+        super().__init__(parent)
+        self.titleLabel = SubtitleLabel(title, self)
+        self.contentLabel = BodyLabel('加载中...', self)
+        
+        self.vBoxLayout = QVBoxLayout(self)
+        self.vBoxLayout.addWidget(self.titleLabel)
+        self.vBoxLayout.addWidget(self.contentLabel)
+        
+    def setValue(self, value: str):
+        self.contentLabel.setText(value)
 
 question_types = {
     'single': '单选题',
@@ -429,6 +443,18 @@ class QuestionInterface(QFrame):
     def setup_ui(self):
         self.vBoxLayout = QVBoxLayout(self)
         
+        # 统计卡片
+        self.cardWidget = QWidget(self)
+        self.flowLayout = FlowLayout(self.cardWidget)
+        
+        self.totalCard = StatisticsCard('总题目数', self)
+        self.enabledCard = StatisticsCard('启用题目数', self)
+        self.filteredCard = StatisticsCard('筛选题目数', self)
+        
+        self.flowLayout.addWidget(self.totalCard)
+        self.flowLayout.addWidget(self.enabledCard)
+        self.flowLayout.addWidget(self.filteredCard)
+        
         # 工具栏
         self.toolWidget = QWidget(self)
         self.toolLayout = QHBoxLayout(self.toolWidget)
@@ -501,6 +527,7 @@ class QuestionInterface(QFrame):
         # 题目表格
         self.table = QuestionTable(self)
         
+        self.vBoxLayout.addWidget(self.cardWidget)
         self.vBoxLayout.addWidget(self.toolWidget)
         self.vBoxLayout.addWidget(self.table)
         
@@ -508,6 +535,12 @@ class QuestionInterface(QFrame):
         """加载题目到表格"""
         try:
             questions = load_questions()
+            
+            # 更新统计卡片
+            total_questions = len(questions)
+            enabled_questions = len([q for q in questions if getattr(q, 'enabled', True)])
+            self.totalCard.setValue(str(total_questions))
+            self.enabledCard.setValue(str(enabled_questions))
             
             # 收集所有标签
             self.all_tags.clear()
@@ -535,6 +568,7 @@ class QuestionInterface(QFrame):
             
     def update_table_visibility(self):
         """统一处理搜索和过滤的逻辑"""
+        visible_count = 0
         for row in range(self.table.rowCount()):
             # 首先检查是否符合搜索条件
             show = False
@@ -558,6 +592,11 @@ class QuestionInterface(QFrame):
                 show = self.current_tag_filter in tags_item.text().split(', ')
             
             self.table.setRowHidden(row, not show)
+            if show:
+                visible_count += 1
+        
+        # 更新筛选题目数
+        self.filteredCard.setValue(str(visible_count))
     
     def search_questions(self, keyword: str):
         """搜索题目"""

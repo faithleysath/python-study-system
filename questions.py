@@ -34,11 +34,11 @@ def load_questions() -> List[Question]:
     except FileNotFoundError:
         return []
 
-@lru_cache()
-def get_total_questions() -> int:
-    """获取题库总题目数量"""
+def get_total_enabled_questions() -> int:
+    """获取题库总启用题目数量"""
     questions = load_questions()
-    return len(questions)
+    enabled_questions = [q for q in questions if q.enabled]
+    return len(enabled_questions)
 
 def get_random_question(student_id: str) -> QuestionResponse:
     """获取随机题目"""

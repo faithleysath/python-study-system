@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from db import save_answer_record, get_excluded_questions, get_question_record
 from models import AnswerRequest
-from questions import get_random_question, check_answer, get_total_questions, get_question_by_id
+from questions import get_random_question, check_answer, get_total_enabled_questions, get_question_by_id
 from auth import auth_required
 
 router = APIRouter(prefix="/api/practice")
@@ -26,7 +26,7 @@ async def get_stats(request: Request):
     """获取题库统计信息"""
     student_id = request.cookies.get("studentId")
     try:
-        total_count = get_total_questions()
+        total_count = get_total_enabled_questions()
         excluded_count = len(get_excluded_questions(student_id))
         return {
             "total_count": total_count,
