@@ -352,6 +352,7 @@ class QuestionTable(TableWidget):
         def on_toggled(checked, btn=enabledBtn, qid=question['id']):
             btn.setIcon(FluentIcon.ACCEPT if checked else FluentIcon.CANCEL)
             self.parent().update_question_enabled(qid, checked)
+            self.parent().update_static()
         enabledBtn.toggled.connect(on_toggled)
         layout.addWidget(enabledBtn)
         
@@ -563,6 +564,24 @@ class QuestionInterface(QFrame):
             InfoBar.error(
                 title='错误',
                 content=f'加载题目失败: {str(e)}',
+                parent=self
+            ).show()
+
+    def update_static(self):
+        try:
+            questions = load_questions()
+            
+            # 更新统计卡片
+            total_questions = len(questions)
+            enabled_questions = len([q for q in questions if getattr(q, 'enabled', True)])
+            self.totalCard.setValue(str(total_questions))
+            self.enabledCard.setValue(str(enabled_questions))
+        
+
+        except Exception as e:
+            InfoBar.error(
+                title='错误',
+                content=f'刷新统计失败: {str(e)}',
                 parent=self
             ).show()
             
