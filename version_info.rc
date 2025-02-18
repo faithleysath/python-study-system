@@ -1,32 +1,38 @@
-#include <windows.h>
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,1,0
- PRODUCTVERSION 1,1,1,0
- FILEFLAGSMASK 0x3fL
- FILEFLAGS 0x0L
- FILEOS VOS_NT_WINDOWS32
- FILETYPE VFT_APP
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904b0"
-        BEGIN
-            VALUE "CompanyName", "laysath"
-            VALUE "FileDescription", "西夏墅中学授权使用"
-            VALUE "FileVersion", "1.1.1"
-            VALUE "InternalName", "my_app"
-            VALUE "LegalCopyright", "版权所有 © 2025 laysath（授权于西夏墅中学使用）"
-            VALUE "OriginalFilename", "my_app.exe"
-            VALUE "ProductName", "My Application"
-            VALUE "ProductVersion", "1.1.1"
-            VALUE "Developer", "laysath"
-            VALUE "ContactInfo", "负责人：吴志安，联系电话：13401320595"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x409, 1200
-    END
-END
+# UTF-8
+#
+# For more details about fixed file info 'ffi' see:
+# http://msdn.microsoft.com/en-us/library/ms646997.aspx
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 1, 1, 0),
+    prodvers=(1, 1, 1, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo(
+      [
+        StringTable(
+          u'040904B0',
+          [
+            StringStruct(u'CompanyName', u'laysath'),
+            StringStruct(u'FileDescription', u'西夏墅中学授权使用'),
+            StringStruct(u'FileVersion', u'1.1.1'),
+            StringStruct(u'InternalName', u'my_app'),
+            StringStruct(u'LegalCopyright', u'版权所有 © 2025 laysath（授权于西夏墅中学使用）'),
+            StringStruct(u'OriginalFilename', u'my_app.exe'),
+            StringStruct(u'ProductName', u'My Application'),
+            StringStruct(u'ProductVersion', u'1.1.1'),
+            StringStruct(u'Developer', u'laysath'),
+            StringStruct(u'ContactInfo', u'负责人：吴志安，联系电话：13401320595')
+          ]
+        )
+      ]
+    ),
+    VarFileInfo([VarStruct(u'Translation', [0x409, 1200])])
+  ]
+)
