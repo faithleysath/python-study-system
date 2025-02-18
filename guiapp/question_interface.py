@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QFrame, QHBoxLayout, QVBoxLayout, QWidget, 
-                            QTableWidgetItem, QButtonGroup)
+                            QTableWidgetItem, QButtonGroup, QFileDialog)
 from PyQt5.QtCore import Qt, pyqtSignal
 from qfluentwidgets import (SubtitleLabel, FluentIcon, PushButton, InfoBar, BodyLabel, SearchLineEdit,
                            ComboBox, TableWidget, TransparentToolButton,
@@ -8,6 +8,7 @@ from qfluentwidgets import (SubtitleLabel, FluentIcon, PushButton, InfoBar, Body
                            RoundMenu, Action, SwitchButton, TransparentToggleToolButton)
 
 from questions import get_question_by_id, update_question, load_questions, delete_question
+import json
 
 question_types = {
     'single': '单选题',
@@ -486,6 +487,14 @@ class QuestionInterface(QFrame):
         self.batchButton.setFlyout(menu)
         
         self.toolLayout.addWidget(self.batchButton)
+        # 添加导入/导出按钮
+        self.importButton = PushButton('导入题目', self)
+        self.exportButton = PushButton('导出题目', self)
+        self.importButton.clicked.connect(self.import_questions)
+        self.exportButton.clicked.connect(self.export_questions)
+        
+        self.toolLayout.addWidget(self.importButton)
+        self.toolLayout.addWidget(self.exportButton)
         self.toolLayout.addWidget(self.typeComboBox)
         self.toolLayout.addWidget(self.addButton)
         
@@ -953,6 +962,138 @@ class QuestionInterface(QFrame):
                     content=f'导入题目失败: {str(e)}',
                     parent=self
                 ).show()
+    
+    def export_questions(self):
+        """导出选中的题目"""
+        # 获取选中的行
+        selected_rows = set(item.row() for item in self.table.selectedItems())
+        if not selected_rows:
+            InfoBar.warning(
+                title='提示',
+                content='请先选择要导出的题目',
+                parent=self
+            ).show()
+            return
+            
+        try:
+            # 收集选中的题目
+            questions_to_export = []
+            for row in selected_rows:
+                if not self.table.isRowHidden(row):
+                    # 获取题目ID
+                    id_item = self.table.item(row, 0)
+                    if id_item:
+                        question_id = id_item.text()
+                        question = get_question_by_id(question_id, include_answer=True)
+                        question_data = question.model_dump()
+                        # 移除id字段
+                        del question_data['id']
+                        questions_to_export.append(question_data)
+            
+            if not questions_to_export:
+                return
+                
+            # 弹出文件选择对话框
+            file_path, _ = QFileDialog.getSaveFileName(
+                self,
+                "导出题目",
+                "",
+                "题目文件 (*.questions)"
+            )
+            
+            if file_path:
+                # 确保文件扩展名正确
+                if not file_path.endswith('.questions'):
+                    file_path += '.questions'
+                    
+                # 保存到文件
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(questions_to_export, f, ensure_ascii=False, indent=2)
+                
+                InfoBar.success(
+                    title='成功',
+                    content=f'已导出 {len(questions_to_export)} 道题目',
+                    parent=self
+                ).show()
+                
+        except Exception as e:
+            InfoBar.error(
+                title='错误',
+                content=f'导出题目失败: {str(e)}',
+                parent=self
+            ).show()
+            
+    def import_questions(self):
+        """导入题目"""
+        try:
+            # 弹出文件选择对话框
+            file_path, _ = QFileDialog.getOpenFileName(
+                self,
+                "导入题目",
+                "",
+                "题目文件 (*.questions)"
+            )
+            
+            if not file_path:
+                return
+                
+            # 读取文件
+            with open(file_path, 'r', encoding='utf-8') as f:
+                questions_to_import = json.load(f)
+                
+            if not isinstance(questions_to_import, list):
+                raise ValueError("无效的题目文件格式")
+                
+            # 获取当前最大ID
+            questions = load_questions()
+            if questions:
+                max_id = max(int(q.id[1:]) for q in questions)
+            else:
+                max_id = 0
+                
+            # 导入题目
+            success_count = 0
+            for i, question_data in enumerate(questions_to_import, 1):
+                try:
+                    # 分配新ID
+                    new_id = f"q{str(max_id + i).zfill(3)}"
+                    question_data['id'] = new_id
+                    
+                    # 添加"外部导入"标签
+                    if 'tags' not in question_data:
+                        question_data['tags'] = []
+                    if '外部导入' not in question_data['tags']:
+                        question_data['tags'].append('外部导入')
+                    
+                    # 保存题目
+                    update_question(new_id, question_data)
+                    success_count += 1
+                    
+                except Exception as e:
+                    InfoBar.error(
+                        title='错误',
+                        content=f'导入第 {i} 道题目失败: {str(e)}',
+                        parent=self
+                    ).show()
+            
+            # 刷新表格
+            self.table.clearContents()
+            self.table.setRowCount(0)
+            self.load_questions()
+            
+            if success_count > 0:
+                InfoBar.success(
+                    title='成功',
+                    content=f'已导入 {success_count} 道题目',
+                    parent=self
+                ).show()
+                
+        except Exception as e:
+            InfoBar.error(
+                title='错误',
+                content=f'导入题目失败: {str(e)}',
+                parent=self
+            ).show()
     
     def ai_batch_import_questions(self):
         """AI批量导入题目"""
