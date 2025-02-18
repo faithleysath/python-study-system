@@ -184,7 +184,6 @@ class ConfigInterface(ScrollArea):
             cfg.systemCycleDays,
             self.systemGroup
         )
-        self.cycleDaysCard.spinbox.setRange(1, 30)
         
         # 正确阈值设置
         self.correctThresholdCard = SpinSettingCard(
@@ -194,7 +193,6 @@ class ConfigInterface(ScrollArea):
             cfg.systemCorrectThreshold,
             self.systemGroup
         )
-        self.correctThresholdCard.spinbox.setRange(1, 10)
         
         # 练习阈值设置
         self.practiceThresholdCard = SpinSettingCard(
@@ -204,7 +202,6 @@ class ConfigInterface(ScrollArea):
             cfg.systemPracticeThreshold,
             self.systemGroup
         )
-        self.practiceThresholdCard.spinbox.setRange(1, 100)
 
         # 创建考试设置卡片
         self.examGroup = ExamSettingCard(self.scrollWidget)
@@ -288,28 +285,24 @@ class ExamSettingCard(ExpandGroupSettingCard):
         # 考试时长设置
         self.durationLabel = BodyLabel("考试时长（分钟）")
         self.durationBox = CompactSpinBox()
-        self.durationBox.setRange(1, 180)
         self.durationBox.setValue(cfg.systemExamDuration.value)
         self.durationBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemExamDuration, v))
         
         # 考试题目数量
         self.questionCountLabel = BodyLabel("题目数量")
         self.questionCountBox = CompactSpinBox()
-        self.questionCountBox.setRange(1, 100)
         self.questionCountBox.setValue(cfg.systemExamQuestionCount.value)
         self.questionCountBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemExamQuestionCount, v))
         
         # 及格分数
         self.passScoreLabel = BodyLabel("及格分数")
         self.passScoreBox = CompactSpinBox()
-        self.passScoreBox.setRange(0, 100)
         self.passScoreBox.setValue(cfg.systemPassScore.value)
         self.passScoreBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemPassScore, v))
         
         # 题目范围天数
         self.rangeDaysLabel = BodyLabel("题目范围（天）")
         self.rangeDaysBox = CompactSpinBox()
-        self.rangeDaysBox.setRange(1, 365)
         self.rangeDaysBox.setValue(cfg.systemQuestionRangeDays.value)
         self.rangeDaysBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemQuestionRangeDays, v))
 
@@ -348,19 +341,16 @@ class AdvancedSettingCard(ExpandGroupSettingCard):
         # 数据库设置组
         self.dbPoolSizeLabel = BodyLabel("数据库连接池大小")
         self.dbPoolSizeBox = CompactSpinBox()
-        self.dbPoolSizeBox.setRange(10, 200)
         self.dbPoolSizeBox.setValue(cfg.databasePoolSize.value)
         self.dbPoolSizeBox.valueChanged.connect(lambda v: self._updateConfig(cfg.databasePoolSize, v))
         
         self.dbMaxOverflowLabel = BodyLabel("最大溢出连接数")
         self.dbMaxOverflowBox = CompactSpinBox()
-        self.dbMaxOverflowBox.setRange(10, 500)
         self.dbMaxOverflowBox.setValue(cfg.databaseMaxOverflow.value)
         self.dbMaxOverflowBox.valueChanged.connect(lambda v: self._updateConfig(cfg.databaseMaxOverflow, v))
         
         self.dbTimeoutLabel = BodyLabel("连接超时时间（秒）")
         self.dbTimeoutBox = CompactSpinBox()
-        self.dbTimeoutBox.setRange(10, 300)
         self.dbTimeoutBox.setValue(cfg.databasePoolTimeout.value)
         self.dbTimeoutBox.valueChanged.connect(lambda v: self._updateConfig(cfg.databasePoolTimeout, v))
         
@@ -386,13 +376,11 @@ class AdvancedSettingCard(ExpandGroupSettingCard):
         # 速率限制设置组
         self.rateLimitLabel = BodyLabel("请求速率限制（次/窗口）")
         self.rateLimitBox = CompactSpinBox()
-        self.rateLimitBox.setRange(1, 100)
         self.rateLimitBox.setValue(cfg.rateLimitMaxRequests.value)
         self.rateLimitBox.valueChanged.connect(lambda v: self._updateConfig(cfg.rateLimitMaxRequests, v))
         
         self.windowSizeLabel = BodyLabel("限制窗口大小（秒）")
         self.windowSizeBox = CompactSpinBox()
-        self.windowSizeBox.setRange(1, 3600)
         self.windowSizeBox.setValue(cfg.rateLimitWindow.value)
         self.windowSizeBox.valueChanged.connect(lambda v: self._updateConfig(cfg.rateLimitWindow, v))
 

@@ -74,7 +74,7 @@ class MainWindow(FluentWindow):
         self.setWindowIcon(QIcon(os.path.join(get_template_path(), 'logo.ico')))
         # 设置窗口属性
         self.resize(1000, 960)
-        self.setWindowTitle('Python学习系统管理工具 v1.0')
+        self.setWindowTitle('Python学习系统管理工具 v1.1')
         
         # 将窗口移动到屏幕中心
         desktop = QApplication.desktop().availableGeometry()
