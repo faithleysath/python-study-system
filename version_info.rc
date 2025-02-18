@@ -20,13 +20,13 @@ VSVersionInfo(
           u'040904B0',
           [
             StringStruct(u'CompanyName', u'laysath'),
-            StringStruct(u'FileDescription', u'西夏墅中学授权使用'),
-            StringStruct(u'FileVersion', u'1.1.1'),
-            StringStruct(u'InternalName', u'my_app'),
+            StringStruct(u'FileDescription', u'Python学习系统'),
+            StringStruct(u'FileVersion', u'1.1.2'),
+            StringStruct(u'InternalName', u'Python学习系统'),
             StringStruct(u'LegalCopyright', u'版权所有 © 2025 laysath（授权于西夏墅中学使用）'),
             StringStruct(u'OriginalFilename', u'my_app.exe'),
-            StringStruct(u'ProductName', u'My Application'),
-            StringStruct(u'ProductVersion', u'1.1.1'),
+            StringStruct(u'ProductName', u'Python学习系统'),
+            StringStruct(u'ProductVersion', u'1.1.2'),
             StringStruct(u'Developer', u'laysath'),
             StringStruct(u'ContactInfo', u'负责人：吴志安，联系电话：13401320595')
           ]
