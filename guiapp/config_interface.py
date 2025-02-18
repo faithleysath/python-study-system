@@ -27,6 +27,8 @@ class SpinSettingCard(SettingCard):
         super().__init__(icon, title, description, parent)
         self.config = config
         self.spinbox = CompactSpinBox(self)
+        self.spinbox.setMaximum(9999)
+        self.spinbox.setFixedWidth(80)
         self.hBoxLayout.addWidget(self.spinbox)
         self.hBoxLayout.addSpacing(12)
         self.spinbox.setValue(config.value)
@@ -285,24 +287,32 @@ class ExamSettingCard(ExpandGroupSettingCard):
         # 考试时长设置
         self.durationLabel = BodyLabel("考试时长（分钟）")
         self.durationBox = CompactSpinBox()
+        self.durationBox.setMaximum(9999)
+        self.durationBox.setFixedWidth(80)
         self.durationBox.setValue(cfg.systemExamDuration.value)
         self.durationBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemExamDuration, v))
         
         # 考试题目数量
         self.questionCountLabel = BodyLabel("题目数量")
         self.questionCountBox = CompactSpinBox()
+        self.questionCountBox.setMaximum(9999)
+        self.questionCountBox.setFixedWidth(80)
         self.questionCountBox.setValue(cfg.systemExamQuestionCount.value)
         self.questionCountBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemExamQuestionCount, v))
         
         # 及格分数
         self.passScoreLabel = BodyLabel("及格分数")
         self.passScoreBox = CompactSpinBox()
+        self.passScoreBox.setMaximum(9999)
+        self.passScoreBox.setFixedWidth(80)
         self.passScoreBox.setValue(cfg.systemPassScore.value)
         self.passScoreBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemPassScore, v))
         
         # 题目范围天数
         self.rangeDaysLabel = BodyLabel("题目范围（天）")
         self.rangeDaysBox = CompactSpinBox()
+        self.rangeDaysBox.setMaximum(9999)
+        self.rangeDaysBox.setFixedWidth(80)
         self.rangeDaysBox.setValue(cfg.systemQuestionRangeDays.value)
         self.rangeDaysBox.valueChanged.connect(lambda v: self._updateConfig(cfg.systemQuestionRangeDays, v))
 
@@ -341,16 +351,22 @@ class AdvancedSettingCard(ExpandGroupSettingCard):
         # 数据库设置组
         self.dbPoolSizeLabel = BodyLabel("数据库连接池大小")
         self.dbPoolSizeBox = CompactSpinBox()
+        self.dbPoolSizeBox.setMaximum(9999)
+        self.dbPoolSizeBox.setFixedWidth(80)
         self.dbPoolSizeBox.setValue(cfg.databasePoolSize.value)
         self.dbPoolSizeBox.valueChanged.connect(lambda v: self._updateConfig(cfg.databasePoolSize, v))
         
         self.dbMaxOverflowLabel = BodyLabel("最大溢出连接数")
         self.dbMaxOverflowBox = CompactSpinBox()
+        self.dbMaxOverflowBox.setMaximum(9999)
+        self.dbMaxOverflowBox.setFixedWidth(80)
         self.dbMaxOverflowBox.setValue(cfg.databaseMaxOverflow.value)
         self.dbMaxOverflowBox.valueChanged.connect(lambda v: self._updateConfig(cfg.databaseMaxOverflow, v))
         
         self.dbTimeoutLabel = BodyLabel("连接超时时间（秒）")
         self.dbTimeoutBox = CompactSpinBox()
+        self.dbTimeoutBox.setMaximum(9999)
+        self.dbTimeoutBox.setFixedWidth(80)
         self.dbTimeoutBox.setValue(cfg.databasePoolTimeout.value)
         self.dbTimeoutBox.valueChanged.connect(lambda v: self._updateConfig(cfg.databasePoolTimeout, v))
         
@@ -376,11 +392,15 @@ class AdvancedSettingCard(ExpandGroupSettingCard):
         # 速率限制设置组
         self.rateLimitLabel = BodyLabel("请求速率限制（次/窗口）")
         self.rateLimitBox = CompactSpinBox()
+        self.rateLimitBox.setMaximum(9999)
+        self.rateLimitBox.setFixedWidth(80)
         self.rateLimitBox.setValue(cfg.rateLimitMaxRequests.value)
         self.rateLimitBox.valueChanged.connect(lambda v: self._updateConfig(cfg.rateLimitMaxRequests, v))
         
         self.windowSizeLabel = BodyLabel("限制窗口大小（秒）")
         self.windowSizeBox = CompactSpinBox()
+        self.windowSizeBox.setMaximum(9999)
+        self.windowSizeBox.setFixedWidth(80)
         self.windowSizeBox.setValue(cfg.rateLimitWindow.value)
         self.windowSizeBox.valueChanged.connect(lambda v: self._updateConfig(cfg.rateLimitWindow, v))
 
