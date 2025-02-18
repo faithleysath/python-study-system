@@ -7,7 +7,7 @@ from qfluentwidgets import (SubtitleLabel, FluentIcon, PushButton, InfoBar, Body
                            SpinBox, RadioButton, CheckBox, PrimarySplitPushButton,
                            RoundMenu, Action, SwitchButton, TransparentToggleToolButton)
 
-from questions import get_question_by_id, update_question, load_questions
+from questions import get_question_by_id, update_question, load_questions, delete_question
 
 question_types = {
     'single': '单选题',
@@ -627,23 +627,25 @@ class QuestionInterface(QFrame):
             dialog = MessageBoxBase(self)
             dialog.titleLabel = SubtitleLabel('确认删除')
             dialog.contentLabel = BodyLabel(f'确定要删除选中的 {len(selected_rows)} 道题目吗？此操作不可恢复。')
+            dialog.contentLabel.setStyleSheet('color: red')
+            
+            # 添加到对话框的内部布局
+            dialog.viewLayout.addWidget(dialog.titleLabel)
+            dialog.viewLayout.addSpacing(16)
+            dialog.viewLayout.addWidget(dialog.contentLabel)
             
             if dialog.exec():
-                count = 0
+                # 收集所有要删除的题目ID
+                success_count = 0
                 for row in selected_rows:
                     if not self.table.isRowHidden(row):
-                        # 获取题目ID
                         id_item = self.table.item(row, 0)
                         if id_item:
                             question_id = id_item.text()
-                            # 从questions.json中删除题目
                             try:
-                                with open('data/questions.json', 'r', encoding='utf-8') as f:
-                                    questions = json.load(f)
-                                questions = [q for q in questions if q['id'] != question_id]
-                                with open('data/questions.json', 'w', encoding='utf-8') as f:
-                                    json.dump(questions, f, ensure_ascii=False, indent=2)
-                                count += 1
+                                # 使用questions.py中的函数删除题目
+                                delete_question(question_id)
+                                success_count += 1
                             except Exception as e:
                                 InfoBar.error(
                                     title='错误',
@@ -658,7 +660,7 @@ class QuestionInterface(QFrame):
                 
                 InfoBar.success(
                     title='成功',
-                    content=f'已删除 {count} 道题目',
+                    content=f'已删除 {success_count} 道题目',
                     parent=self
                 ).show()
             
@@ -686,6 +688,11 @@ class QuestionInterface(QFrame):
             dialog = MessageBoxBase(self)
             dialog.titleLabel = SubtitleLabel('添加标签')
             dialog.contentLabel = BodyLabel('请输入要添加的标签（多个标签用逗号分隔）:')
+            
+            # 添加到对话框的内部布局
+            dialog.viewLayout.addWidget(dialog.titleLabel)
+            dialog.viewLayout.addSpacing(16)
+            dialog.viewLayout.addWidget(dialog.contentLabel)
             
             # 添加输入框
             dialog.tagEdit = LineEdit(dialog)
@@ -773,6 +780,11 @@ class QuestionInterface(QFrame):
             dialog = MessageBoxBase(self)
             dialog.titleLabel = SubtitleLabel('删除标签')
             dialog.contentLabel = BodyLabel('请选择要删除的标签:')
+            
+            # 添加到对话框的内部布局
+            dialog.viewLayout.addWidget(dialog.titleLabel)
+            dialog.viewLayout.addSpacing(16)
+            dialog.viewLayout.addWidget(dialog.contentLabel)
             
             # 添加标签复选框
             dialog.tagCheckBoxes = []

@@ -6,7 +6,7 @@ from typing import Union, List, Tuple
 
 from fastapi import HTTPException
 
-from models import Question, QuestionResponse, QuestionType
+from models import Question, QuestionResponse, QuestionType, Record, ExamRecord
 from paths import get_base_path
 
 # 初始化questions.json
@@ -154,6 +154,36 @@ def update_question(question_id: str, question_data: dict) -> None:
         new_question = {'id': question_id}
         new_question.update(question_data)
         data['questions'].append(new_question)
+    
+    # 保存更新
+    with open(questions_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    
+    # 清除缓存
+    load_questions.cache_clear()
+
+def delete_question(question_id: str) -> None:
+    """删除指定ID的题目及其相关记录
+    
+    Args:
+        question_id: 题目ID
+    """
+    from db import get_db
+    
+    # 删除题目相关的记录
+    with get_db() as db:
+        # 删除普通答题记录
+        db.query(Record).filter(Record.question_id == question_id).delete()
+        # 删除考试记录
+        db.query(ExamRecord).filter(ExamRecord.question_id == question_id).delete()
+    
+    # 读取现有题目
+    questions_path = os.path.join(get_base_path(), 'data', 'questions.json')
+    with open(questions_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    # 删除题目
+    data['questions'] = [q for q in data['questions'] if q['id'] != question_id]
     
     # 保存更新
     with open(questions_path, 'w', encoding='utf-8') as f:
