@@ -1,4 +1,5 @@
 fastapi
+requests
 uvicorn
 python-multipart
 sqlalchemy

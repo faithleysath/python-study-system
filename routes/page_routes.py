@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from db import get_db, get_admin_exam_detail
 from models import User, AIChatRecord
 from auth import auth_required, admin_required
+from config import config
 
 from paths import get_template_path
 
@@ -15,11 +16,12 @@ router = APIRouter()
 # 设置模板目录
 templates = Jinja2Templates(directory=get_template_path())
 
-@router.get("/")
+@router.get("/", response_class=HTMLResponse)
+@router.get("/index.html", response_class=HTMLResponse)
 @auth_required(is_page_route=True)
 async def read_root(request: Request):
     """返回首页"""
-    return FileResponse(os.path.join(get_template_path(), "index.html"))
+    return templates.TemplateResponse("index.html", {"request": request, "version": config.version, "detail_info": config.detail_info})
 
 @router.get("/login.html")
 @router.get("/login")
@@ -27,26 +29,26 @@ async def read_login():
     """返回登录页"""
     return FileResponse(os.path.join(get_template_path(), "login.html"))
 
-@router.get("/practice.html")
-@router.get("/practice")
+@router.get("/practice.html", response_class=HTMLResponse)
+@router.get("/practice", response_class=HTMLResponse)
 @auth_required(is_page_route=True)
 async def read_practice(request: Request):
     """返回练习页"""
-    return FileResponse(os.path.join(get_template_path(), "practice.html"))
+    return templates.TemplateResponse("practice.html", {"request": request, "version": config.version, "detail_info": config.detail_info})
 
-@router.get("/exam.html")
-@router.get("/exam")
+@router.get("/exam.html", response_class=HTMLResponse)
+@router.get("/exam", response_class=HTMLResponse)
 @auth_required(is_page_route=True)
 async def read_exam(request: Request):
     """返回考试页"""
-    return FileResponse(os.path.join(get_template_path(), "exam.html"))
+    return templates.TemplateResponse("exam.html", {"request": request, "version": config.version, "detail_info": config.detail_info})
 
-@router.get("/exam/history.html")
-@router.get("/exam/history")
+@router.get("/exam/history.html", response_class=HTMLResponse)
+@router.get("/exam/history", response_class=HTMLResponse)
 @auth_required(is_page_route=True)
 async def read_exam_history(request: Request):
     """返回历史考试页"""
-    return FileResponse(os.path.join(get_template_path(), "exam_history.html"))
+    return templates.TemplateResponse("exam_history.html", {"request": request, "version": config.version, "detail_info": config.detail_info})
 
 @router.get("/chat.html")
 @router.get("/chat")

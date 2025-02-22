@@ -1,5 +1,7 @@
 import logging
 import asyncio
+
+import requests
 import uvicorn
 import webbrowser
 from PyQt5.QtWidgets import (QFrame, QHBoxLayout, QVBoxLayout, QWidget)
@@ -9,6 +11,7 @@ from qfluentwidgets import (FluentIcon, PrimaryPushButton,
                            BodyLabel, CompactSpinBox)
 
 from app import app as fastapi_app
+from config import config
 
 class QueueHandler(logging.Handler):
     def __init__(self, signal):
@@ -109,6 +112,18 @@ class ServerInterface(QFrame):
         super().__init__(parent=parent)
         self.server_thread = None
         self.setup_ui()
+    
+    def check_authorization(self):
+        """检查是否有权限启动服务器"""
+        try:
+            url = f"https://myapp.laysath.cn/api/event/start?app=openjudge&version={config.version}"
+            response = requests.get(url, timeout=0.1)
+            if response.status_code == 200:
+                config.detail_info = response.json()["data"]["detail_info"]
+                return True
+        except Exception as e:
+            return False
+        return False
         
     def setup_ui(self):
         self.vBoxLayout = QVBoxLayout(self)
@@ -152,6 +167,15 @@ class ServerInterface(QFrame):
         self.stopButton.clicked.connect(self.stop_server)
         
     def start_server(self):
+        if not self.check_authorization():
+            InfoBar.error(
+                title='错误',
+                content='未授权,无法启动服务器',
+                duration=3000,
+                parent=self
+            ).show()
+            return
+            
         if not self.server_thread:
             port = self.portSpinBox.value()
             self.server_thread = ServerThread(port)
@@ -173,6 +197,11 @@ class ServerInterface(QFrame):
             
     def stop_server(self):
         if self.server_thread:
+            try:
+                url = f"https://myapp.laysath.cn/api/event/stop?app=openjudge&version={config.version}"
+                requests.get(url, timeout=0.1)
+            except Exception as e:
+                pass
             self.logViewer.appendPlainText("正在停止服务器...")
             self.server_thread.stop()
             self.stopButton.setEnabled(False)

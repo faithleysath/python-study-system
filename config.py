@@ -104,6 +104,21 @@ class Config:
         self.start_config_reloader()
         
         self._initialized = True
+
+    @property
+    def version(self) -> str:
+        """获取系统版本"""
+        return "1.1.3"
+    
+    @property
+    def detail_info(self) -> str:
+        """获取系统详细信息"""
+        return "试用版本，仅供学习交流使用" if getattr(self, "_detail_info", None) is None else self._detail_info
+    
+    @detail_info.setter
+    def detail_info(self, value: str):
+        """设置系统详细信息"""
+        self._detail_info = value
     
     @property
     def admin_username(self) -> Optional[str]:
