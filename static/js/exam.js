@@ -125,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             questionType.className = 'question-type type-' + question.type;
             
             // 显示题目内容
-            // 将\n替换为<br>以支持多行文本显示
-            document.querySelector('.question-content').innerHTML = question.content.replace(/\n/g, '<br>');
+            // 直接设置题目内容，CSS的white-space: pre-wrap会处理换行和空格
+            document.querySelector('.question-content').textContent = question.content;
             
             // 显示难度
             showDifficulty(question.difficulty);
@@ -288,13 +288,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="correct-answer">正确答案: ${correctAnswerText}</div>
                 `;
                 
-                resultItem.innerHTML = `
-                    <div class="question-number">第 ${index + 1} 题</div>
-                    <div class="result-status">${question.is_correct ? '✓ 正确' : '✗ 错误'}</div>
-                    <div class="question-content">${question.content.replace(/\n/g, '<br>')}</div>
-                    ${answerDisplay}
-                    ${question.explanation ? `<div class="explanation">解释: ${question.explanation.replace(/\n/g, '<br>')}</div>` : ''}
-                `;
+                // 创建具有正确类名的元素
+                const questionNumber = document.createElement('div');
+                questionNumber.className = 'question-number';
+                questionNumber.textContent = `第 ${index + 1} 题`;
+                
+                const resultStatus = document.createElement('div');
+                resultStatus.className = 'result-status';
+                resultStatus.textContent = question.is_correct ? '✓ 正确' : '✗ 错误';
+                
+                const questionContent = document.createElement('div');
+                questionContent.className = 'question-content';
+                questionContent.textContent = question.content;
+                
+                // 添加到resultItem
+                resultItem.appendChild(questionNumber);
+                resultItem.appendChild(resultStatus);
+                resultItem.appendChild(questionContent);
+                
+                // 添加答案显示区域
+                const answerDiv = document.createElement('div');
+                answerDiv.innerHTML = answerDisplay;
+                resultItem.appendChild(answerDiv);
+                
+                // 如果有解释，添加解释
+                if (question.explanation) {
+                    const explanationDiv = document.createElement('div');
+                    explanationDiv.className = 'explanation';
+                    explanationDiv.textContent = `解释: ${question.explanation}`;
+                    resultItem.appendChild(explanationDiv);
+                }
                 
                 resultList.appendChild(resultItem);
             });

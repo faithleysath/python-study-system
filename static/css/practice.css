@@ -154,6 +154,7 @@
     line-height: 1.6;
     margin-bottom: 25px;
     color: #202124;
+    white-space: pre-wrap;
 }
 
 /* 选项样式 */

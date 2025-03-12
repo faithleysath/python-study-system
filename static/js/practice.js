@@ -150,8 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
         questionType.className = 'question-type type-' + question.type;
         
         // 显示题目内容
-        // 将\n替换为<br>以支持多行文本显示
-        questionContent.innerHTML = question.content.replace(/\n/g, '<br>');
+        // 直接设置题目内容，CSS的white-space: pre-wrap会处理换行和空格
+        questionContent.textContent = question.content;
         
         // 显示难度
         showDifficulty(question.difficulty);
@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (explanation) {
             document.querySelector('.explanation').style.display = 'block';
+            // 使用textContent以保留原始格式（空格和换行）
             document.querySelector('.explanation').textContent = explanation;
         }
         
