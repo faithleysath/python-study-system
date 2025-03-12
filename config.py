@@ -108,7 +108,7 @@ class Config:
     @property
     def version(self) -> str:
         """获取系统版本"""
-        return "1.1.4"
+        return "1.1.5"
     
     @property
     def detail_info(self) -> str:
