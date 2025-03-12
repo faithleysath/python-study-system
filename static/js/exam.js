@@ -125,7 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             questionType.className = 'question-type type-' + question.type;
             
             // 显示题目内容
-            document.querySelector('.question-content').textContent = question.content;
+            // 将\n替换为<br>以支持多行文本显示
+            document.querySelector('.question-content').innerHTML = question.content.replace(/\n/g, '<br>');
             
             // 显示难度
             showDifficulty(question.difficulty);
@@ -290,9 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultItem.innerHTML = `
                     <div class="question-number">第 ${index + 1} 题</div>
                     <div class="result-status">${question.is_correct ? '✓ 正确' : '✗ 错误'}</div>
-                    <div class="question-content">${question.content}</div>
+                    <div class="question-content">${question.content.replace(/\n/g, '<br>')}</div>
                     ${answerDisplay}
-                    ${question.explanation ? `<div class="explanation">解释: ${question.explanation}</div>` : ''}
+                    ${question.explanation ? `<div class="explanation">解释: ${question.explanation.replace(/\n/g, '<br>')}</div>` : ''}
                 `;
                 
                 resultList.appendChild(resultItem);

@@ -150,7 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
         questionType.className = 'question-type type-' + question.type;
         
         // 显示题目内容
-        questionContent.textContent = question.content;
+        // 将\n替换为<br>以支持多行文本显示
+        questionContent.innerHTML = question.content.replace(/\n/g, '<br>');
         
         // 显示难度
         showDifficulty(question.difficulty);
