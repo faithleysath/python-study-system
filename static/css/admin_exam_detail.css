@@ -96,6 +96,7 @@
 .question-content {
     margin-bottom: 1.5rem;
     line-height: 1.6;
+    white-space: pre-wrap;
 }
 
 /* 选项样式 */

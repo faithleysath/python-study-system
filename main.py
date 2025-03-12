@@ -7,9 +7,9 @@ default_json = """
     },
     "database": {
         "file": "openjudge.db",
-        "max_overflow": 100,
-        "pool_size": 50,
-        "pool_timeout": 60
+        "max_overflow": 200,
+        "pool_size": 100,
+        "pool_timeout": 120
     },
     "deepseek": {
         "api_key": "sk-esadasdfsdf",
