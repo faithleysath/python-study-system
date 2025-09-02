@@ -4,8 +4,8 @@
 # http://msdn.microsoft.com/en-us/library/ms646997.aspx
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 1, 1, 0),
-    prodvers=(1, 1, 1, 0),
+    filevers=(1, 1, 6, 0),
+    prodvers=(1, 1, 6, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -21,12 +21,12 @@ VSVersionInfo(
           [
             StringStruct(u'CompanyName', u'laysath'),
             StringStruct(u'FileDescription', u'Python学习系统'),
-            StringStruct(u'FileVersion', u'1.1.5'),
+            StringStruct(u'FileVersion', u'1.1.6'),
             StringStruct(u'InternalName', u'Python学习系统'),
             StringStruct(u'LegalCopyright', u'版权所有 © 2025 laysath'),
             StringStruct(u'OriginalFilename', u'my_app.exe'),
             StringStruct(u'ProductName', u'Python学习系统'),
-            StringStruct(u'ProductVersion', u'1.1.5'),
+            StringStruct(u'ProductVersion', u'1.1.6'),
             StringStruct(u'Developer', u'laysath'),
             StringStruct(u'ContactInfo', u'负责人：吴志安，联系电话：13401320595')
           ]

@@ -268,7 +268,7 @@ class ConfigInterface(ScrollArea):
             if main_window:
                 # 关闭主窗口，这会触发closeEvent进行清理
                 main_window.close()
-                QApplication.quit(0)
+                QApplication.quit()
         
         # 在新线程中执行重启操作
         Thread(target=delayed_restart).start()

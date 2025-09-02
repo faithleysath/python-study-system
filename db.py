@@ -102,21 +102,25 @@ def init_db():
     except Exception as e:
         print(f"警告：修复 data 目录权限失败: {e}")
 
+    # 首先，确保所有表都已创建
+    Base.metadata.create_all(engine)
+
     # 数据库迁移：使用 SQLAlchemy 检查并添加新列
     inspector = inspect(engine)
-    columns = [col['name'] for col in inspector.get_columns('users')]
-    if 'enable_exam' not in columns:
-        print("正在更新数据库结构：为 'users' 表添加 'enable_exam' 列...")
-        try:
-            with engine.begin() as connection:
-                connection.execute(text('ALTER TABLE users ADD COLUMN enable_exam BOOLEAN DEFAULT 0'))
-            print("数据库结构更新完成。")
-        except Exception as e:
-            print(f"数据库迁移失败: {e}")
-            # 迁移失败时退出，避免后续错误
-            sys.exit(1)
+    # 检查 'users' 表是否存在，以防万一
+    if inspector.has_table("users"):
+        columns = [col['name'] for col in inspector.get_columns('users')]
+        if 'enable_exam' not in columns:
+            print("正在更新数据库结构：为 'users' 表添加 'enable_exam' 列...")
+            try:
+                with engine.begin() as connection:
+                    connection.execute(text('ALTER TABLE users ADD COLUMN enable_exam BOOLEAN DEFAULT 0'))
+                print("数据库结构更新完成。")
+            except Exception as e:
+                print(f"数据库迁移失败: {e}")
+                # 迁移失败时退出，避免后续错误
+                sys.exit(1)
 
-    Base.metadata.create_all(engine)
     # 启动考试状态检查器
     start_exam_checker()
 

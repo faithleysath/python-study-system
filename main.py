@@ -64,6 +64,7 @@ from guiapp.server_interface import ServerInterface
 from guiapp.config_interface import ConfigInterface
 from guiapp.question_interface import QuestionInterface
 from guiapp.database_interface import DatabaseInterface
+from guiapp.migration_interface import MigrationInterface
 from guiapp.config import cfg
 from db import init_db
 
@@ -73,8 +74,8 @@ class MainWindow(FluentWindow):
         super().__init__()
         self.setWindowIcon(QIcon(os.path.join(get_template_path(), 'logo.ico')))
         # 设置窗口属性
-        self.resize(1000, 960)
-        self.setWindowTitle('Python学习系统管理工具 v1.1.5')
+        self.resize(1100, 960)
+        self.setWindowTitle('Python学习系统管理工具 v1.1.6')
         
         # 将窗口移动到屏幕中心
         desktop = QApplication.desktop().availableGeometry()
@@ -93,6 +94,9 @@ class MainWindow(FluentWindow):
         
         self.databaseInterface = DatabaseInterface(self)
         self.databaseInterface.setObjectName('databaseInterface')
+
+        self.migrationInterface = MigrationInterface(self)
+        self.migrationInterface.setObjectName('migrationInterface')
         
         # 初始化窗口
         self.init_window()
@@ -103,6 +107,7 @@ class MainWindow(FluentWindow):
         self.addSubInterface(self.configInterface, FluentIcon.SETTING, '配置管理')
         self.addSubInterface(self.questionInterface, FluentIcon.EDIT, '题库管理')
         self.addSubInterface(self.databaseInterface, FluentIcon.LIBRARY, '数据管理')
+        self.addSubInterface(self.migrationInterface, FluentIcon.UP, '数据库迁移')
         def onclick_avatar():
             w = MessageBox(
                 "支持作者🥰",
