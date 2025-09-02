@@ -19,7 +19,7 @@ class User(Base):
     bound_ip = Column(String(15))
     bound_time = Column(DateTime, index=True)
     enable_ai = Column(Boolean, default=True)  # 是否允许使用AI问答,默认允许
-    enable_exam = Column(Boolean, default=True) # 是否允许参加考试,默认允许
+    enable_exam = Column(Boolean, default=False) # 是否允许参加考试,默认关闭
 
 class Record(Base):
     __tablename__ = 'records'

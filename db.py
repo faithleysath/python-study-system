@@ -85,15 +85,22 @@ def init_db():
     当执行Base.metadata.create_all()时,
     SQLAlchemy会自动创建所有已注册模型对应的数据库表。
     """
-    # 自动添加写权限，以防万一（跨平台实现）
-    if os.path.exists(db_path):
-        try:
-            # 获取当前权限
-            current_mode = os.stat(db_path).st_mode
-            # 添加用户写权限
-            os.chmod(db_path, current_mode | stat.S_IWUSR)
-        except Exception as e:
-            print(f"警告：修改数据库文件权限失败: {e}")
+    # 自动修复data目录及内部文件的权限，以防万一（跨平台实现）
+    try:
+        # 确保data目录存在且可读/写/执行
+        if not os.path.exists(data_path):
+            os.makedirs(data_path, mode=0o755)
+        else:
+            os.chmod(data_path, 0o755)
+
+        # 确保data目录下的所有文件都可写
+        for filename in os.listdir(data_path):
+            filepath = os.path.join(data_path, filename)
+            if os.path.isfile(filepath):
+                current_mode = os.stat(filepath).st_mode
+                os.chmod(filepath, current_mode | stat.S_IWUSR | stat.S_IWGRP)
+    except Exception as e:
+        print(f"警告：修复 data 目录权限失败: {e}")
 
     # 数据库迁移：使用 SQLAlchemy 检查并添加新列
     inspector = inspect(engine)
@@ -102,7 +109,7 @@ def init_db():
         print("正在更新数据库结构：为 'users' 表添加 'enable_exam' 列...")
         try:
             with engine.begin() as connection:
-                connection.execute(text('ALTER TABLE users ADD COLUMN enable_exam BOOLEAN DEFAULT 1'))
+                connection.execute(text('ALTER TABLE users ADD COLUMN enable_exam BOOLEAN DEFAULT 0'))
             print("数据库结构更新完成。")
         except Exception as e:
             print(f"数据库迁移失败: {e}")
@@ -328,7 +335,9 @@ def create_or_update_user(student_id: str, name: str, ip: str) -> None:
                 student_id=student_id,
                 name=name,
                 bound_ip=ip,
-                bound_time=datetime.now()
+                bound_time=datetime.now(),
+                enable_ai=True,
+                enable_exam=False
             )
             db.add(user)
             get_user_info.cache_clear()
@@ -431,14 +440,27 @@ def get_question_record(student_id: str, question_id: str) -> dict:
         }
 
 def get_ongoing_exam(student_id: str) -> dict:
-    """检查是否有进行中的考试"""
+    """检查是否有进行中的考试，并返回用户权限"""
     with get_db() as db:
+        # 获取用户信息
+        user = db.query(User).filter(User.student_id == student_id).first()
+        user_permissions = {
+            "enable_exam": user.enable_exam if user else False
+        }
+
+        # 检查进行中的考试
         exam = db.query(Exam).filter(
             and_(
                 Exam.student_id == student_id,
                 Exam.status == "进行中"
             )
         ).first()
+        
+        base_response = {
+            "correct_count": get_correct_questions_count(db, student_id),
+            "required_count": config.practice_threshold,
+            **user_permissions
+        }
         
         if exam:
             # 检查是否超过截止时间
@@ -447,18 +469,17 @@ def get_ongoing_exam(student_id: str) -> dict:
                 db.commit()
                 return {
                     "has_ongoing_exam": False,
-                    "correct_count": get_correct_questions_count(db, student_id),
-                    "required_count": config.practice_threshold
+                    **base_response
                 }
             return {
                 "has_ongoing_exam": True,
-                "exam_id": exam.exam_id
+                "exam_id": exam.exam_id,
+                **base_response
             }
         
         return {
             "has_ongoing_exam": False,
-            "correct_count": get_correct_questions_count(db, student_id),
-            "required_count": config.practice_threshold
+            **base_response
         }
 
 def get_correct_questions_count(db: Session, student_id: str) -> int:

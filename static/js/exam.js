@@ -362,6 +362,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await API.request('/api/exam/check');
             
+            // 优先检查个人考试权限
+            if (!response.enable_exam) {
+                startExamBtn.disabled = true;
+                showMessage('您的考试权限已被禁用，请联系管理员');
+                return;
+            }
+
             if (response.has_ongoing_exam) {
                 examId = response.exam_id;
                 startExam();

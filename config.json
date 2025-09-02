@@ -1,4 +1,3 @@
-
 {
     "admin": {
         "password": "admin123",
@@ -16,8 +15,8 @@
         "model": "deepseek-chat"
     },
     "features": {
-        "enable_exam": false,
-        "enable_registration": false
+        "enable_exam": true,
+        "enable_registration": true
     },
     "rate_limit": {
         "max_requests": 5,
@@ -27,9 +26,9 @@
         "correct_threshold": 3,
         "cycle_days": 3,
         "exam_duration": 10,
-        "exam_question_count": 10,
+        "exam_question_count": 3,
         "pass_score": 60,
-        "practice_threshold": 20,
+        "practice_threshold": 3,
         "question_range_days": 3
     },
     "QFluentWidgets": {

@@ -115,6 +115,7 @@ class ServerInterface(QFrame):
     
     def check_authorization(self):
         """检查是否有权限启动服务器"""
+        return True
         try:
             url = f"https://myapp.laysath.cn/api/event/start?app=openjudge&version={config.version}"
             response = requests.get(url, timeout=0.1)

@@ -262,6 +262,12 @@ class DatabaseInterface(QFrame):
         # 批量操作按钮
         self.batchUserButton = PrimarySplitPushButton('批量操作', self)
         menu = RoundMenu(parent=self.batchUserButton)
+        menu.addAction(Action(FluentIcon.ACCEPT, '批量启用AI权限', triggered=lambda: self.batch_update_ai_permission(True)))
+        menu.addAction(Action(FluentIcon.CANCEL, '批量禁用AI权限', triggered=lambda: self.batch_update_ai_permission(False)))
+        menu.addSeparator()
+        menu.addAction(Action(FluentIcon.ACCEPT, '批量启用考试权限', triggered=lambda: self.batch_update_exam_permission(True)))
+        menu.addAction(Action(FluentIcon.CANCEL, '批量禁用考试权限', triggered=lambda: self.batch_update_exam_permission(False)))
+        menu.addSeparator()
         menu.addAction(Action(FluentIcon.REMOVE, '批量解绑IP', triggered=self.batch_unbind_ip))
         menu.addAction(Action(FluentIcon.DELETE, '批量删除', triggered=self.batch_delete_users))
         self.batchUserButton.setFlyout(menu)
@@ -495,6 +501,69 @@ class DatabaseInterface(QFrame):
                     content=f'批量删除失败: {str(e)}',
                     parent=self
                 ).show()
+
+    def batch_update_ai_permission(self, enable: bool):
+        """批量更新AI权限"""
+        self._batch_update_permission('ai', enable)
+
+    def batch_update_exam_permission(self, enable: bool):
+        """批量更新考试权限"""
+        self._batch_update_permission('exam', enable)
+
+    def _batch_update_permission(self, permission_type: str, enable: bool):
+        """通用批量更新权限函数"""
+        try:
+            selected_rows = set(item.row() for item in self.userTable.selectedItems())
+            
+            if not selected_rows:
+                InfoBar.warning(
+                    title='提示',
+                    content='请先选择要操作的用户',
+                    parent=self
+                ).show()
+                return
+
+            update_func = None
+            type_text = ''
+            if permission_type == 'ai':
+                update_func = update_user_ai_permission_no_async
+                type_text = 'AI'
+            elif permission_type == 'exam':
+                update_func = update_user_exam_permission_no_async
+                type_text = '考试'
+            else:
+                return
+
+            count = 0
+            for row in selected_rows:
+                if not self.userTable.isRowHidden(row):
+                    student_id_item = self.userTable.item(row, 0)
+                    if student_id_item:
+                        student_id = student_id_item.text()
+                        if update_func(student_id, enable):
+                            count += 1
+            
+            if count > 0:
+                action_text = "启用" if enable else "禁用"
+                InfoBar.success(
+                    title='成功',
+                    content=f'已为 {count} 个用户批量{action_text}{type_text}权限',
+                    parent=self
+                ).show()
+                self.refresh_data()
+            else:
+                InfoBar.info(
+                    title='提示',
+                    content='没有需要更新权限的用户',
+                    parent=self
+                ).show()
+                
+        except Exception as e:
+            InfoBar.error(
+                title='错误',
+                content=f'批量操作失败: {str(e)}',
+                parent=self
+            ).show()
     
     def update_user_ai_permission(self, student_id: str, enable: bool):
         """更新用户AI权限"""
