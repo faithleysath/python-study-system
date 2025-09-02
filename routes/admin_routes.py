@@ -25,8 +25,8 @@ class AdminLoginRequest(BaseModel):
 class UserProgress(BaseModel):
     student_id: str
     name: str
-    bound_ip: str
-    bound_time: datetime
+    bound_ip: Optional[str] = None
+    bound_time: Optional[datetime] = None
     total_questions: int
     correct_questions: int
     accuracy: float
@@ -93,7 +93,7 @@ async def get_users_progress(request: Request):
         exam_stats_sub = (
             db.query(
                 Exam.student_id,
-                func.count(Exam.id).label("exam_count")
+                func.count(Exam.exam_id).label("exam_count")
             )
             .filter(Exam.status == "已完成")
             .group_by(Exam.student_id)
@@ -212,8 +212,8 @@ async def get_system_overview(request: Request):
 
         # 考试统计
         exam_stats = db.query(
-            func.count(Exam.id).label("total_exams"),
-            func.count(case((func.date(Exam.submit_time) == today, Exam.id))).label("today_exams"),
+            func.count(Exam.exam_id).label("total_exams"),
+            func.count(case((func.date(Exam.submit_time) == today, Exam.exam_id))).label("today_exams"),
             func.avg(case((Exam.question_count > 0, Exam.correct_count * 100.0 / Exam.question_count))).label("avg_score"),
             func.avg(case((and_(Exam.question_count > 0, func.date(Exam.submit_time) == today), Exam.correct_count * 100.0 / Exam.question_count))).label("today_avg_score")
         ).filter(Exam.status == "已完成").one()
@@ -343,6 +343,7 @@ async def get_user_detail(request: Request, student_id: str):
             User.bound_ip,
             User.bound_time,
             User.enable_ai,
+            User.enable_exam,
             func.count(Record.id).label('total_questions'),
             func.sum(case((Record.is_correct == True, 1), else_=0)).label('correct_questions'),
             CodeRecord.get_time.label('code_time')
@@ -388,7 +389,8 @@ async def get_user_detail(request: Request, student_id: str):
                 "bound_time": result.bound_time,
                 "has_code": result.code_time is not None,
                 "code_time": result.code_time,
-                "enable_ai": result.enable_ai
+                "enable_ai": result.enable_ai,
+                "enable_exam": result.enable_exam
             },
             "practice_stats": {
                 "total_questions": total_questions,

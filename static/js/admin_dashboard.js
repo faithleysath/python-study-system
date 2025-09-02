@@ -288,16 +288,57 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/admin/login';
     });
 
+    let autoRefreshIntervalId = null;
+
     // 刷新数据函数
     function refreshData() {
         loadOverview();
         loadProgress();
     }
 
-    // 为刷新按钮添加事件监听器
+    // 启动自动刷新
+    function startAutoRefresh(interval) {
+        if (autoRefreshIntervalId) {
+            clearInterval(autoRefreshIntervalId);
+        }
+        autoRefreshIntervalId = setInterval(refreshData, interval);
+    }
+
+    // 停止自动刷新
+    function stopAutoRefresh() {
+        if (autoRefreshIntervalId) {
+            clearInterval(autoRefreshIntervalId);
+            autoRefreshIntervalId = null;
+        }
+    }
+
+    // 为控件添加事件监听器
     const refreshBtn = document.getElementById('refresh-btn');
+    const autoRefreshToggle = document.getElementById('auto-refresh-toggle');
+    const refreshIntervalSelect = document.getElementById('refresh-interval');
+
     if (refreshBtn) {
         refreshBtn.addEventListener('click', refreshData);
+    }
+
+    if (autoRefreshToggle && refreshIntervalSelect) {
+        autoRefreshToggle.addEventListener('change', () => {
+            if (autoRefreshToggle.checked) {
+                refreshIntervalSelect.disabled = false;
+                const interval = parseInt(refreshIntervalSelect.value, 10);
+                startAutoRefresh(interval);
+            } else {
+                refreshIntervalSelect.disabled = true;
+                stopAutoRefresh();
+            }
+        });
+
+        refreshIntervalSelect.addEventListener('change', () => {
+            if (autoRefreshToggle.checked) {
+                const interval = parseInt(refreshIntervalSelect.value, 10);
+                startAutoRefresh(interval);
+            }
+        });
     }
 
     // 打开问答记录详情

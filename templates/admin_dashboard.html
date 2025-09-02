@@ -104,10 +104,24 @@
         <div class="progress-container">
             <div class="progress-header">
                 <h2>学生进度</h2>
-                <button id="refresh-btn" class="refresh-btn">
-                    <i class="fas fa-sync-alt"></i>
-                    刷新
-                </button>
+                <div class="refresh-controls">
+                    <button id="refresh-btn" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        手动刷新
+                    </button>
+                    <div class="auto-refresh">
+                        <label for="auto-refresh-toggle">自动刷新:</label>
+                        <label class="switch">
+                            <input type="checkbox" id="auto-refresh-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <select id="refresh-interval" disabled>
+                            <option value="30000">30秒</option>
+                            <option value="60000">1分钟</option>
+                            <option value="300000">5分钟</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="progress-waterfall" id="progress-waterfall">
                 <!-- 进度卡片将通过JavaScript动态添加 -->
