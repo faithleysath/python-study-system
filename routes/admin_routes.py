@@ -77,103 +77,112 @@ async def get_users_progress(request: Request):
     with get_db() as db:
         today = datetime.now().date()
 
-        # 子查询: 获取每个用户的最新考试ID和成绩
-        latest_exam_subquery = (
+        # 1. 子查询: 计算每个学生的练习统计
+        practice_stats_sub = (
+            db.query(
+                Record.student_id,
+                func.count(Record.id).label("total_questions"),
+                func.sum(case((Record.is_correct == true(), 1), else_=0)).label("correct_questions")
+            )
+            .group_by(Record.student_id)
+            .subquery()
+        )
+
+        # 2. 子查询: 计算每个学生的考试统计
+        exam_stats_sub = (
             db.query(
                 Exam.student_id,
-                Exam.correct_count,
-                Exam.question_count,
+                func.count(Exam.id).label("exam_count")
+            )
+            .filter(Exam.status == "已完成")
+            .group_by(Exam.student_id)
+            .subquery()
+        )
+
+        # 3. 子查询: 获取每个学生的最新一次考试成绩
+        latest_exam_sub = (
+            db.query(
+                Exam.student_id,
+                (Exam.correct_count * 100.0 / Exam.question_count).label("last_exam_score"),
                 func.row_number().over(
                     partition_by=Exam.student_id,
                     order_by=Exam.submit_time.desc()
-                ).label("row_num")
+                ).label("rn")
             )
-            .filter(Exam.status == "已完成")
+            .filter(Exam.status == "已完成", Exam.question_count > 0)
             .subquery()
         )
-        
-        # 只保留每个用户的最新考试记录
-        latest_exam = (
+        latest_exam_score_sub = (
+            db.query(latest_exam_sub.c.student_id, latest_exam_sub.c.last_exam_score)
+            .filter(latest_exam_sub.c.rn == 1)
+            .subquery()
+        )
+
+        # 4. 子查询: 检查今天是否获得认证码
+        code_today_sub = (
+            db.query(CodeRecord.student_id)
+            .filter(func.date(CodeRecord.get_time) == today)
+            .distinct()
+            .subquery()
+        )
+
+        # 5. 子查询: 计算今天的AI聊天统计
+        chat_stats_sub = (
             db.query(
-                latest_exam_subquery.c.student_id,
-                latest_exam_subquery.c.correct_count,
-                latest_exam_subquery.c.question_count
+                AIChatRecord.student_id,
+                func.count(AIChatRecord.id).label("chat_count"),
+                func.sum(case((AIChatRecord.is_irrelevant == true(), 1), else_=0)).label("today_irrelevant_chats")
             )
-            .filter(latest_exam_subquery.c.row_num == 1)
+            .filter(func.date(AIChatRecord.chat_time) == today)
+            .group_by(AIChatRecord.student_id)
             .subquery()
         )
-        
-        # 使用联合查询获取所有所需数据，减少数据库往返次数
+
+        # 主查询: 联合所有子查询
         query_result = (
             db.query(
-                User.student_id,
-                User.name,
-                User.bound_ip,
-                User.bound_time,
-                User.enable_ai,
-                # 答题总数
-                func.count(Record.id).label("total_questions"),
-                # 答对题数
-                func.sum(case((Record.is_correct == True, 1), else_=0)).label("correct_questions"),
-                # 考试数量
-                func.count(func.distinct(case((Exam.status == "已完成", Exam.exam_id)))).label("exam_count"),
-                # 最新考试成绩
-                latest_exam.c.correct_count,
-                latest_exam.c.question_count,
-                # 今日有无认证码
-                func.count(func.distinct(case(
-                    (func.date(CodeRecord.get_time) == today, CodeRecord.id)
-                ))).label("has_code_today"),
-                # 今日提问数量
-                func.count(func.distinct(case(
-                    (func.date(AIChatRecord.chat_time) == today, AIChatRecord.id)
-                ))).label("chat_count"),
-                # 今日无关问题数
-                func.count(func.distinct(case(
-                    (and_(
-                        func.date(AIChatRecord.chat_time) == today,
-                        AIChatRecord.is_irrelevant == True
-                    ), AIChatRecord.id)
-                ))).label("today_irrelevant_chats"),
+                User,
+                practice_stats_sub.c.total_questions,
+                practice_stats_sub.c.correct_questions,
+                exam_stats_sub.c.exam_count,
+                latest_exam_score_sub.c.last_exam_score,
+                code_today_sub.c.student_id.isnot(None).label("has_code"),
+                chat_stats_sub.c.chat_count,
+                chat_stats_sub.c.today_irrelevant_chats
             )
-            .outerjoin(Record, User.student_id == Record.student_id)
-            .outerjoin(Exam, User.student_id == Exam.student_id)
-            .outerjoin(CodeRecord, User.student_id == CodeRecord.student_id)
-            .outerjoin(AIChatRecord, User.student_id == AIChatRecord.student_id)
-            .outerjoin(latest_exam, User.student_id == latest_exam.c.student_id)
-            .group_by(User.student_id)
+            .outerjoin(practice_stats_sub, User.student_id == practice_stats_sub.c.student_id)
+            .outerjoin(exam_stats_sub, User.student_id == exam_stats_sub.c.student_id)
+            .outerjoin(latest_exam_score_sub, User.student_id == latest_exam_score_sub.c.student_id)
+            .outerjoin(code_today_sub, User.student_id == code_today_sub.c.student_id)
+            .outerjoin(chat_stats_sub, User.student_id == chat_stats_sub.c.student_id)
             .order_by(User.bound_time.desc())
             .all()
         )
-        
+
         progress_list = []
-        for result in query_result:
-            # 计算正确率
-            total_questions = result.total_questions or 0
-            correct_questions = result.correct_questions or 0
+        for row in query_result:
+            user, total_questions, correct_questions, exam_count, last_exam_score, has_code, chat_count, today_irrelevant_chats = row
+            
+            total_questions = total_questions or 0
+            correct_questions = correct_questions or 0
             accuracy = (correct_questions / total_questions * 100) if total_questions > 0 else 0
-            
-            # 计算最新考试成绩
-            last_exam_score = None
-            if result.correct_count is not None and result.question_count is not None:
-                last_exam_score = round(result.correct_count / result.question_count * 100, 2)
-            
+
             progress_list.append(UserProgress(
-                student_id=result.student_id,
-                name=result.name,
-                bound_ip=result.bound_ip,
-                bound_time=result.bound_time,
+                student_id=user.student_id,
+                name=user.name,
+                bound_ip=user.bound_ip,
+                bound_time=user.bound_time,
                 total_questions=total_questions,
                 correct_questions=correct_questions,
                 accuracy=accuracy,
-                exam_count=result.exam_count or 0,
-                last_exam_score=last_exam_score,
-                has_code=result.has_code_today > 0,
-                chat_count=result.chat_count or 0,
-                today_irrelevant_chats=result.today_irrelevant_chats or 0,
-                enable_ai=result.enable_ai
+                exam_count=exam_count or 0,
+                last_exam_score=round(last_exam_score, 2) if last_exam_score is not None else None,
+                has_code=has_code,
+                chat_count=chat_count or 0,
+                today_irrelevant_chats=today_irrelevant_chats or 0,
+                enable_ai=user.enable_ai
             ))
-        
+            
         return progress_list
 
 @api_router.get("/stats/overview")
@@ -182,67 +191,62 @@ async def get_system_overview(request: Request):
     """获取系统概览统计信息"""
     with get_db() as db:
         today = datetime.now().date()
-        
-        # 获取所有基础数据，只进行一次数据库查询
-        users = db.query(User).all()
-        records = db.query(Record).all()
-        exams = db.query(Exam).all()
-        code_records = db.query(CodeRecord).all()
-        chat_records = db.query(AIChatRecord).all()
-        
-        # 剩余认证码数量
-        codes_file = os.path.join(get_base_path(), 'data', 'codes.txt')
-        with open(codes_file, "r") as f:
-            remaining_codes = len(f.readlines())
-        
-        # 在Python中进行所有统计计算
+
+        # 使用一个查询和多个子查询来获取所有统计数据
         
         # 用户统计
-        total_users = len(users)
-        active_users = sum(1 for user in users if user.bound_time and user.bound_time.date() == today)
-        
+        user_stats = db.query(
+            func.count(User.student_id).label("total_users"),
+            func.count(case((func.date(User.bound_time) == today, User.student_id))).label("active_users")
+        ).one()
+
         # 练习统计
-        total_answers = len(records)
-        today_answers = sum(1 for record in records if record.answer_time.date() == today)
-        
-        total_correct = sum(1 for record in records if record.is_correct)
-        today_correct = sum(1 for record in records if record.is_correct and record.answer_time.date() == today)
-        
+        record_stats = db.query(
+            func.count(Record.id).label("total_answers"),
+            func.count(case((func.date(Record.answer_time) == today, Record.id))).label("today_answers"),
+            func.sum(case((Record.is_correct == true(), 1), else_=0)).label("total_correct"),
+            func.sum(case((and_(Record.is_correct == true(), func.date(Record.answer_time) == today), 1), else_=0)).label("today_correct")
+        ).one()
+
         # 考试统计
-        completed_exams = [exam for exam in exams if exam.status == "已完成"]
-        total_exams = len(completed_exams)
-        today_exams = sum(1 for exam in completed_exams if exam.submit_time and exam.submit_time.date() == today)
-        
-        # 计算平均分数
-        if completed_exams:
-            scores = [(exam.correct_count / exam.question_count * 100) for exam in completed_exams if exam.question_count > 0]
-            avg_score = sum(scores) / len(scores) if scores else 0
-            
-            today_scores = [(exam.correct_count / exam.question_count * 100) 
-                           for exam in completed_exams 
-                           if exam.question_count > 0 and exam.submit_time and exam.submit_time.date() == today]
-            today_avg_score = sum(today_scores) / len(today_scores) if today_scores else 0
-        else:
-            avg_score = 0
-            today_avg_score = 0
-        
+        exam_stats = db.query(
+            func.count(Exam.id).label("total_exams"),
+            func.count(case((func.date(Exam.submit_time) == today, Exam.id))).label("today_exams"),
+            func.avg(case((Exam.question_count > 0, Exam.correct_count * 100.0 / Exam.question_count))).label("avg_score"),
+            func.avg(case((and_(Exam.question_count > 0, func.date(Exam.submit_time) == today), Exam.correct_count * 100.0 / Exam.question_count))).label("today_avg_score")
+        ).filter(Exam.status == "已完成").one()
+
         # 认证统计
-        total_codes = len(code_records)
-        today_code_students = {record.student_id for record in code_records if record.get_time.date() == today}
-        today_code_users = len(today_code_students)
-        
+        code_stats = db.query(
+            func.count(CodeRecord.id).label("total_codes"),
+            func.count(func.distinct(case((func.date(CodeRecord.get_time) == today, CodeRecord.student_id)))).label("today_code_users")
+        ).one()
+
         # 问答统计
-        total_chats = len(chat_records)
-        today_chats = sum(1 for chat in chat_records if chat.chat_time.date() == today)
-        
-        irrelevant_chats = sum(1 for chat in chat_records if chat.is_irrelevant)
-        today_irrelevant_chats = sum(1 for chat in chat_records 
-                                    if chat.is_irrelevant and chat.chat_time.date() == today)
-        
+        chat_stats = db.query(
+            func.count(AIChatRecord.id).label("total_chats"),
+            func.count(case((func.date(AIChatRecord.chat_time) == today, AIChatRecord.id))).label("today_chats"),
+            func.sum(case((AIChatRecord.is_irrelevant == true(), 1), else_=0)).label("irrelevant_chats"),
+            func.sum(case((and_(AIChatRecord.is_irrelevant == true(), func.date(AIChatRecord.chat_time) == today), 1), else_=0)).label("today_irrelevant_chats")
+        ).one()
+
+        # 剩余认证码数量
+        codes_file = os.path.join(get_base_path(), 'data', 'codes.txt')
+        try:
+            with open(codes_file, "r") as f:
+                remaining_codes = len([line for line in f if line.strip()])
+        except FileNotFoundError:
+            remaining_codes = 0
+
+        total_answers = record_stats.total_answers or 0
+        today_answers = record_stats.today_answers or 0
+        total_correct = record_stats.total_correct or 0
+        today_correct = record_stats.today_correct or 0
+
         return {
             # 用户统计
-            "total_users": total_users,
-            "active_users": active_users,
+            "total_users": user_stats.total_users or 0,
+            "active_users": user_stats.active_users or 0,
             
             # 练习统计
             "total_answers": total_answers,
@@ -251,21 +255,21 @@ async def get_system_overview(request: Request):
             "today_accuracy": (today_correct / today_answers * 100) if today_answers > 0 else 0,
             
             # 考试统计
-            "total_exams": total_exams,
-            "today_exams": today_exams,
-            "avg_score": round(avg_score, 2) if avg_score else 0,
-            "today_avg_score": round(today_avg_score, 2) if today_avg_score else 0,
+            "total_exams": exam_stats.total_exams or 0,
+            "today_exams": exam_stats.today_exams or 0,
+            "avg_score": round(exam_stats.avg_score, 2) if exam_stats.avg_score else 0,
+            "today_avg_score": round(exam_stats.today_avg_score, 2) if exam_stats.today_avg_score else 0,
             
             # 认证统计
-            "total_codes": total_codes,
-            "today_code_users": today_code_users,
+            "total_codes": code_stats.total_codes or 0,
+            "today_code_users": code_stats.today_code_users or 0,
             "remaining_codes": remaining_codes,
             
             # 问答统计
-            "total_chats": total_chats,
-            "today_chats": today_chats,
-            "irrelevant_chats": irrelevant_chats,
-            "today_irrelevant_chats": today_irrelevant_chats
+            "total_chats": chat_stats.total_chats or 0,
+            "today_chats": chat_stats.today_chats or 0,
+            "irrelevant_chats": chat_stats.irrelevant_chats or 0,
+            "today_irrelevant_chats": chat_stats.today_irrelevant_chats or 0
         }
 
 @api_router.get("/chat/{student_id}")

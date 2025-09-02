@@ -292,13 +292,16 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/admin/login';
     });
 
-    // 定时刷新数据
-    function startAutoRefresh() {
-        // 每2秒刷新一次数据
-        setInterval(() => {
-            loadOverview();
-            loadProgress();
-        }, 2000);
+    // 刷新数据函数
+    function refreshData() {
+        loadOverview();
+        loadProgress();
+    }
+
+    // 为刷新按钮添加事件监听器
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', refreshData);
     }
 
     // 打开问答记录详情
@@ -344,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化
     loadOverview();
     loadProgress();
-    startAutoRefresh();
 });
 
 // 打开考试详情
