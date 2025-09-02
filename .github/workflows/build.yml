@@ -1,8 +1,6 @@
 name: Build Windows Executable
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -28,7 +26,7 @@ jobs:
         pyinstaller --onefile --add-data "static;static" --add-data "templates;templates" --icon=logo.ico --noconsole --name OpenJudge --version-file=version_info.rc main.py
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: OpenJudge-windows
         path: dist/OpenJudge.exe
