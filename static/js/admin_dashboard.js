@@ -194,31 +194,27 @@ document.addEventListener('DOMContentLoaded', () => {
             // 更新AI权限按钮状态和事件
             const aiPermissionBtn = document.getElementById('ai-permission-btn');
             let currentAiEnabled = data.user_info.enable_ai;
-            updateAIPermissionButton(aiPermissionBtn, currentAiEnabled);
+            updatePermissionButton(aiPermissionBtn, currentAiEnabled);
             
             // 添加AI权限切换事件
             aiPermissionBtn.onclick = async () => {
-                try {
-                    const response = await fetch(`/api/admin/users/${data.user_info.student_id}/ai-permission`, {
-                        method: 'POST',
-                        headers,
-                        body: JSON.stringify({
-                            enable: !currentAiEnabled
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        currentAiEnabled = !currentAiEnabled;
-                        updateAIPermissionButton(aiPermissionBtn, currentAiEnabled);
-                        // 刷新进度数据
-                        loadProgress();
-                    } else {
-                        throw new Error('更新AI权限失败');
-                    }
-                } catch (error) {
-                    console.error('更新AI权限失败:', error);
-                    alert('更新AI权限失败,请重试');
-                }
+                await togglePermission('ai', data.user_info.student_id, !currentAiEnabled, (newState) => {
+                    currentAiEnabled = newState;
+                    updatePermissionButton(aiPermissionBtn, currentAiEnabled);
+                });
+            };
+
+            // 更新考试权限按钮状态和事件
+            const examPermissionBtn = document.getElementById('exam-permission-btn');
+            let currentExamEnabled = data.user_info.enable_exam;
+            updatePermissionButton(examPermissionBtn, currentExamEnabled);
+
+            // 添加考试权限切换事件
+            examPermissionBtn.onclick = async () => {
+                await togglePermission('exam', data.user_info.student_id, !currentExamEnabled, (newState) => {
+                    currentExamEnabled = newState;
+                    updatePermissionButton(examPermissionBtn, currentExamEnabled);
+                });
             };
             
             // 更新或添加认证码状态
@@ -328,8 +324,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 更新AI权限按钮状态
-    function updateAIPermissionButton(button, enabled) {
+    // 通用权限切换函数
+    async function togglePermission(type, studentId, enable, callback) {
+        try {
+            const response = await fetch(`/api/admin/users/${studentId}/${type}-permission`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ enable })
+            });
+
+            if (response.ok) {
+                callback(enable);
+                // 刷新进度数据以反映更改
+                loadProgress();
+            } else {
+                throw new Error(`更新${type}权限失败`);
+            }
+        } catch (error) {
+            console.error(`更新${type}权限失败:`, error);
+            alert(`更新${type}权限失败,请重试`);
+        }
+    }
+
+    // 更新权限按钮状态
+    function updatePermissionButton(button, enabled) {
         const statusText = button.querySelector('.status-text');
         const icon = button.querySelector('i');
         

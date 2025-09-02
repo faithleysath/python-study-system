@@ -36,6 +36,7 @@ class UserProgress(BaseModel):
     chat_count: int = 0
     today_irrelevant_chats: int = 0
     enable_ai: bool = True
+    enable_exam: bool = False
 
 class UpdateAIPermissionRequest(BaseModel):
     enable: bool
@@ -180,7 +181,8 @@ async def get_users_progress(request: Request):
                 has_code=has_code,
                 chat_count=chat_count or 0,
                 today_irrelevant_chats=today_irrelevant_chats or 0,
-                enable_ai=user.enable_ai
+                enable_ai=user.enable_ai,
+                enable_exam=user.enable_exam
             ))
             
         return progress_list
