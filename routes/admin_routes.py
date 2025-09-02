@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from sqlalchemy import case, func, and_, true
 
-from db import get_db, get_base_path, update_user_ai_permission
+from db import get_db, get_base_path, update_user_ai_permission, update_user_exam_permission_no_async
 from models import User, Record, Exam, CodeRecord, AIChatRecord
 from auth import verify_admin_credentials, create_access_token, admin_required
 
@@ -40,6 +40,9 @@ class UserProgress(BaseModel):
 class UpdateAIPermissionRequest(BaseModel):
     enable: bool
 
+class UpdateExamPermissionRequest(BaseModel):
+    enable: bool
+
 @api_router.post("/login")
 async def admin_login(login_data: AdminLoginRequest):
     """管理员登录"""
@@ -54,6 +57,15 @@ async def admin_login(login_data: AdminLoginRequest):
 async def update_user_ai_permission_route(request: Request, student_id: str, permission: UpdateAIPermissionRequest):
     """更新用户的AI使用权限"""
     result = await update_user_ai_permission(student_id, permission.enable)
+    if not result:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    return {"success": True}
+
+@api_router.post("/users/{student_id}/exam-permission")
+@admin_required()
+async def update_user_exam_permission_route(request: Request, student_id: str, permission: UpdateExamPermissionRequest):
+    """更新用户的考试权限"""
+    result = update_user_exam_permission_no_async(student_id, permission.enable)
     if not result:
         raise HTTPException(status_code=404, detail="用户不存在")
     return {"success": True}

@@ -233,7 +233,8 @@ def get_user_full_info(student_id: str) -> dict:
             return None
         return {
             "name": user.name,
-            "enable_ai": user.enable_ai
+            "enable_ai": user.enable_ai,
+            "enable_exam": user.enable_exam
         }
 
 async def update_user_ai_permission(student_id: str, enable: bool) -> bool:
@@ -272,6 +273,24 @@ def update_user_ai_permission_no_async(student_id: str, enable: bool) -> bool:
         user.enable_ai = enable
         db.commit()
         get_user_info.cache_clear()  # 清除缓存
+        return True
+
+def update_user_exam_permission_no_async(student_id: str, enable: bool) -> bool:
+    """更新用户的考试权限
+    
+    Args:
+        student_id: 学生ID
+        enable: 是否允许参加考试
+        
+    Returns:
+        bool: 更新是否成功
+    """
+    with get_db() as db:
+        user = db.query(User).filter(User.student_id == student_id).first()
+        if not user:
+            return False
+        user.enable_exam = enable
+        db.commit()
         return True
 
 def create_or_update_user(student_id: str, name: str, ip: str) -> None:

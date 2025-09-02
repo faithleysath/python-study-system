@@ -10,7 +10,7 @@ from qfluentwidgets import (SubtitleLabel, FluentIcon, PrimaryPushButton,
                            FastCalendarPicker, PrimarySplitPushButton,
                            RoundMenu, Action, TabBar)
 
-from db import get_admin_exam_detail, get_db, update_user_ai_permission_no_async, submit_exam
+from db import get_admin_exam_detail, get_db, update_user_ai_permission_no_async, update_user_exam_permission_no_async, submit_exam
 from models import Exam, User
 
 class StatisticsCard(CardWidget):
@@ -30,8 +30,8 @@ class UserTable(TableWidget):
     """用户管理表格"""
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setColumnCount(6)  # 增加一列用于解绑按钮
-        self.setHorizontalHeaderLabels(['学号', '姓名', 'IP地址', '绑定时间', 'AI权限', '操作'])
+        self.setColumnCount(7)  # 增加一列用于解绑按钮
+        self.setHorizontalHeaderLabels(['学号', '姓名', 'IP地址', '绑定时间', 'AI权限', '考试权限', '操作'])
 
         # 启用排序和多选
         self.setSortingEnabled(True)
@@ -43,7 +43,8 @@ class UserTable(TableWidget):
         self.setColumnWidth(2, 150)  # IP
         self.setColumnWidth(3, 200)  # 绑定时间
         self.setColumnWidth(4, 100)  # AI权限
-        self.setColumnWidth(5, 100)  # 操作
+        self.setColumnWidth(5, 100)  # 考试权限
+        self.setColumnWidth(6, 100)  # 操作
         
     def add_user(self, user: dict):
         """添加用户到表格"""
@@ -77,6 +78,27 @@ class UserTable(TableWidget):
         
         self.setCellWidget(row, 4, aiContainer)
         
+        # 考试权限开关
+        examSwitch = SwitchButton()
+        examSwitch.setChecked(user['enable_exam'])
+        examSwitch.setProperty('student_id', user['student_id'])
+        examSwitch.setOffText("禁用")
+        examSwitch.setOnText("启用")
+        # 连接信号
+        examSwitch.checkedChanged.connect(
+            lambda checked, student_id=user['student_id']: 
+            self.parent().parent().parent().update_user_exam_permission(student_id, checked)
+        )
+        
+        # 创建容器并添加开关按钮
+        examContainer = QWidget()
+        examLayout = QHBoxLayout(examContainer)
+        examLayout.setContentsMargins(0, 0, 0, 0)
+        examLayout.addWidget(examSwitch)
+        examLayout.addStretch()
+        
+        self.setCellWidget(row, 5, examContainer)
+        
         # 添加操作按钮容器
         btnContainer = QWidget()
         btnLayout = QHBoxLayout(btnContainer)
@@ -102,7 +124,7 @@ class UserTable(TableWidget):
         btnLayout.addWidget(deleteBtn)
         btnLayout.addStretch()
         
-        self.setCellWidget(row, 5, btnContainer)
+        self.setCellWidget(row, 6, btnContainer)
 
 class ExamTable(TableWidget):
     """考试记录表格"""
@@ -493,7 +515,30 @@ class DatabaseInterface(QFrame):
         except Exception as e:
             InfoBar.error(
                 title='错误',
-                content=f'更新AI权限失败: {str(e)}',
+                    content=f'更新AI权限失败: {str(e)}',
+                    parent=self
+                ).show()
+    
+    def update_user_exam_permission(self, student_id: str, enable: bool):
+        """更新用户考试权限"""
+        try:
+            success = update_user_exam_permission_no_async(student_id, enable)
+            if success:
+                InfoBar.success(
+                    title='成功',
+                    content=f'已{"启用" if enable else "禁用"} {student_id} 的考试权限',
+                    parent=self
+                ).show()
+            else:
+                InfoBar.error(
+                    title='错误',
+                    content=f'更新考试权限失败',
+                    parent=self
+                ).show()
+        except Exception as e:
+            InfoBar.error(
+                title='错误',
+                content=f'更新考试权限失败: {str(e)}',
                 parent=self
             ).show()
             
@@ -675,7 +720,8 @@ class DatabaseInterface(QFrame):
                     'name': user.name,
                     'bound_ip': user.bound_ip,
                     'bound_time': user.bound_time,
-                    'enable_ai': user.enable_ai
+                    'enable_ai': user.enable_ai,
+                    'enable_exam': user.enable_exam
                 })
             
             # 加载考试数据（包括进行中的考试）并按时间排序

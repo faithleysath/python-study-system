@@ -6,7 +6,8 @@ from fastapi import APIRouter, HTTPException, Request
 from config import config
 from db import (
     get_exam_detail, get_ongoing_exam, get_correct_questions_last_week,
-    create_exam, get_exam_questions, update_exam_answer, get_student_exams
+    create_exam, get_exam_questions, update_exam_answer, get_student_exams,
+    get_user_full_info
 )
 from questions import check_answer, get_question_by_id
 from auth import auth_required
@@ -42,6 +43,11 @@ async def start_exam(request: Request):
         raise HTTPException(status_code=403, detail="考试功能当前已关闭")
         
     student_id = request.cookies.get("studentId")
+    
+    # 检查学生个人考试权限
+    user_info = get_user_full_info(student_id)
+    if not user_info or not user_info.get("enable_exam", True):
+        raise HTTPException(status_code=403, detail="您的考试权限已被禁用")
     
     # 获取一周内做对的不重复题目列表
     correct_questions = get_correct_questions_last_week(student_id)
