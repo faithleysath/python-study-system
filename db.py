@@ -1,12 +1,14 @@
 import json
 import os
+import stat
+import sys
 import threading
 import time
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 from functools import lru_cache
 
-from sqlalchemy import create_engine, func, and_
+from sqlalchemy import create_engine, func, and_, inspect, text
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import QueuePool
 
@@ -83,6 +85,30 @@ def init_db():
     当执行Base.metadata.create_all()时,
     SQLAlchemy会自动创建所有已注册模型对应的数据库表。
     """
+    # 自动添加写权限，以防万一（跨平台实现）
+    if os.path.exists(db_path):
+        try:
+            # 获取当前权限
+            current_mode = os.stat(db_path).st_mode
+            # 添加用户写权限
+            os.chmod(db_path, current_mode | stat.S_IWUSR)
+        except Exception as e:
+            print(f"警告：修改数据库文件权限失败: {e}")
+
+    # 数据库迁移：使用 SQLAlchemy 检查并添加新列
+    inspector = inspect(engine)
+    columns = [col['name'] for col in inspector.get_columns('users')]
+    if 'enable_exam' not in columns:
+        print("正在更新数据库结构：为 'users' 表添加 'enable_exam' 列...")
+        try:
+            with engine.begin() as connection:
+                connection.execute(text('ALTER TABLE users ADD COLUMN enable_exam BOOLEAN DEFAULT 1'))
+            print("数据库结构更新完成。")
+        except Exception as e:
+            print(f"数据库迁移失败: {e}")
+            # 迁移失败时退出，避免后续错误
+            sys.exit(1)
+
     Base.metadata.create_all(engine)
     # 启动考试状态检查器
     start_exam_checker()

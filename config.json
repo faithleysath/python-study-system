@@ -1,0 +1,42 @@
+
+{
+    "admin": {
+        "password": "admin123",
+        "username": "admin"
+    },
+    "database": {
+        "file": "openjudge.db",
+        "max_overflow": 200,
+        "pool_size": 100,
+        "pool_timeout": 120
+    },
+    "deepseek": {
+        "api_key": "sk-esadasdfsdf",
+        "base_url": "https://api.deepseek.com",
+        "model": "deepseek-chat"
+    },
+    "features": {
+        "enable_exam": false,
+        "enable_registration": false
+    },
+    "rate_limit": {
+        "max_requests": 5,
+        "window": 120
+    },
+    "system": {
+        "correct_threshold": 3,
+        "cycle_days": 3,
+        "exam_duration": 10,
+        "exam_question_count": 10,
+        "pass_score": 60,
+        "practice_threshold": 20,
+        "question_range_days": 3
+    },
+    "QFluentWidgets": {
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Auto"
+    },
+    "token": {
+        "expire_minutes": 300
+    }
+}
