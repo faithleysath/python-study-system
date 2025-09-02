@@ -316,29 +316,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const refreshBtn = document.getElementById('refresh-btn');
     const autoRefreshToggle = document.getElementById('auto-refresh-toggle');
     const refreshIntervalSelect = document.getElementById('refresh-interval');
+    const customIntervalInput = document.getElementById('custom-interval');
 
     if (refreshBtn) {
         refreshBtn.addEventListener('click', refreshData);
     }
 
-    if (autoRefreshToggle && refreshIntervalSelect) {
+    if (autoRefreshToggle && refreshIntervalSelect && customIntervalInput) {
         autoRefreshToggle.addEventListener('change', () => {
-            if (autoRefreshToggle.checked) {
-                refreshIntervalSelect.disabled = false;
-                const interval = parseInt(refreshIntervalSelect.value, 10);
-                startAutoRefresh(interval);
+            const isEnabled = autoRefreshToggle.checked;
+            refreshIntervalSelect.disabled = !isEnabled;
+            
+            if (isEnabled) {
+                handleIntervalChange();
             } else {
-                refreshIntervalSelect.disabled = true;
+                customIntervalInput.style.display = 'none';
+                customIntervalInput.disabled = true;
                 stopAutoRefresh();
             }
         });
 
-        refreshIntervalSelect.addEventListener('change', () => {
-            if (autoRefreshToggle.checked) {
-                const interval = parseInt(refreshIntervalSelect.value, 10);
-                startAutoRefresh(interval);
+        refreshIntervalSelect.addEventListener('change', handleIntervalChange);
+        customIntervalInput.addEventListener('input', handleIntervalChange);
+    }
+
+    function handleIntervalChange() {
+        const selectedValue = refreshIntervalSelect.value;
+
+        if (selectedValue === 'custom') {
+            customIntervalInput.style.display = 'inline-block';
+            customIntervalInput.disabled = false;
+            const customSeconds = parseInt(customIntervalInput.value, 10);
+            if (customSeconds > 0) {
+                startAutoRefresh(customSeconds * 1000);
+            } else {
+                stopAutoRefresh();
             }
-        });
+        } else {
+            customIntervalInput.style.display = 'none';
+            customIntervalInput.disabled = true;
+            startAutoRefresh(parseInt(selectedValue, 10));
+        }
     }
 
     // 打开问答记录详情

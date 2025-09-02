@@ -116,10 +116,14 @@
                             <span class="slider round"></span>
                         </label>
                         <select id="refresh-interval" disabled>
+                            <option value="5000">5秒</option>
+                            <option value="10000">10秒</option>
                             <option value="30000">30秒</option>
                             <option value="60000">1分钟</option>
                             <option value="300000">5分钟</option>
+                            <option value="custom">自定义</option>
                         </select>
+                        <input type="number" id="custom-interval" min="1" placeholder="秒" style="display: none;" disabled>
                     </div>
                 </div>
             </div>

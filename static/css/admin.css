@@ -375,10 +375,11 @@
     font-size: 0.9rem;
 }
 
-.auto-refresh select {
+.auto-refresh select, .auto-refresh input[type="number"] {
     padding: 0.5rem;
     border-radius: 4px;
     border: 1px solid #ccc;
+    max-width: 80px;
 }
 
 /* 自定义开关样式 */
