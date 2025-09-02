@@ -453,9 +453,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('开始考试失败:', error);
-            showMessage('开始考试失败: ' + error.message);
-            if (error.status === 400) {
-                window.location.href = '/practice'; // 跳转到练习页面
+            // 检查是否是权限错误
+            if (error.status === 403 && error.detail === "您的考试权限已被禁用") {
+                showMessage(error.detail);
+            } else if (error.status === 400) {
+                // 如果是题目数量不足，跳转到练习页面
+                showMessage('开始考试失败: ' + error.message + '，即将跳转到练习页面...');
+                setTimeout(() => {
+                    window.location.href = '/practice';
+                }, 2000);
+            } else {
+                showMessage('开始考试失败: ' + error.message);
             }
         }
     }
