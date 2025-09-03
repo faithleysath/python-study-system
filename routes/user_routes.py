@@ -71,7 +71,9 @@ async def login(request: Request, login_data: LoginRequest):
         create_or_update_user(
             login_data.student_id,
             login_data.name or name,
-            get_client_ip(request)
+            get_client_ip(request),
+            default_ai_permission=config.default_ai_permission,
+            default_exam_permission=config.default_exam_permission
         )
         response = {"success": True, "message": "登录成功"}
         # 创建响应对象

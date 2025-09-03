@@ -330,7 +330,7 @@ def update_user_exam_permission_no_async(student_id: str, enable: bool) -> bool:
         db.commit()
         return True
 
-def create_or_update_user(student_id: str, name: str, ip: str) -> None:
+def create_or_update_user(student_id: str, name: str, ip: str, default_ai_permission: bool = True, default_exam_permission: bool = False) -> None:
     """创建或更新用户信息"""
     with get_db() as db:
         user = db.query(User).filter(User.student_id == student_id).first()
@@ -340,8 +340,8 @@ def create_or_update_user(student_id: str, name: str, ip: str) -> None:
                 name=name,
                 bound_ip=ip,
                 bound_time=datetime.now(),
-                enable_ai=True,
-                enable_exam=False
+                enable_ai=default_ai_permission,
+                enable_exam=default_exam_permission
             )
             db.add(user)
             get_user_info.cache_clear()

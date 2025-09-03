@@ -30,6 +30,8 @@ class Config(QConfig):
     featureEnableRegistration = ConfigItem("features", "enable_registration", False, BoolValidator())
     featureEnableExam = ConfigItem("features", "enable_exam", False, BoolValidator())
     featureEnableIpAntiCheat = ConfigItem("features", "enable_ip_anti_cheat", True, BoolValidator())
+    featureEnableDefaultAiPermission = ConfigItem("features", "default_ai_permission", True, BoolValidator())
+    featureEnableDefaultExamPermission = ConfigItem("features", "default_exam_permission", True, BoolValidator())
     
     # 数据库配置
     databaseFile = ConfigItem("database", "file", "openjudge.db")

@@ -64,6 +64,8 @@ class Config:
             self._enable_registration = features.get('enable_registration', True)
             self._enable_exam = features.get('enable_exam', True)
             self._enable_ip_anti_cheat = features.get('enable_ip_anti_cheat', True)
+            self._default_ai_permission = features.get('default_ai_permission', True)
+            self._default_exam_permission = features.get('default_exam_permission', True)
             
             # 数据库配置
             database = config_data.get('database', {})
@@ -215,6 +217,16 @@ class Config:
     def enable_ip_anti_cheat(self) -> bool:
         """获取是否启用IP防作弊"""
         return self._enable_ip_anti_cheat
+        
+    @property
+    def default_ai_permission(self) -> bool:
+        """获取新用户默认AI权限"""
+        return self._default_ai_permission
+        
+    @property
+    def default_exam_permission(self) -> bool:
+        """获取新用户默认考试权限"""
+        return self._default_exam_permission
         
     @property
     def db_file(self) -> str:

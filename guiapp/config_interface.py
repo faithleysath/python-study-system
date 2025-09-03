@@ -178,6 +178,24 @@ class ConfigInterface(ScrollArea):
             self.systemGroup
         )
         
+        # 默认AI权限开关
+        self.defaultAiPermissionCard = SwitchSettingCard(
+            FluentIcon.ROBOT,
+            "默认AI权限",
+            "新用户注册时默认开启AI问答权限",
+            cfg.featureEnableDefaultAiPermission,
+            self.systemGroup
+        )
+        
+        # 默认考试权限开关
+        self.defaultExamPermissionCard = SwitchSettingCard(
+            FluentIcon.CERTIFICATE,
+            "默认考试权限",
+            "新用户注册时默认开启参加考试权限",
+            cfg.featureEnableDefaultExamPermission,
+            self.systemGroup
+        )
+        
         # 周期天数设置
         self.cycleDaysCard = SpinSettingCard(
             FluentIcon.CALENDAR,
@@ -225,6 +243,8 @@ class ConfigInterface(ScrollArea):
         # 添加所有系统设置卡片
         self.systemGroup.addSettingCard(self.adminSettingCard)
         self.systemGroup.addSettingCard(self.enablingRegistrationCard)
+        self.systemGroup.addSettingCard(self.defaultAiPermissionCard)
+        self.systemGroup.addSettingCard(self.defaultExamPermissionCard)
         self.systemGroup.addSettingCard(self.cycleDaysCard)
         self.systemGroup.addSettingCard(self.correctThresholdCard)
         self.systemGroup.addSettingCard(self.practiceThresholdCard)
