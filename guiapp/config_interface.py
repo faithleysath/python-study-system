@@ -320,8 +320,16 @@ class ExamSettingCard(ExpandGroupSettingCard):
         self.viewLayout.setContentsMargins(0, 0, 0, 0)
         self.viewLayout.setSpacing(0)
 
+        # IP防作弊开关
+        self.enableIpAntiCheatLabel = BodyLabel("IP防作弊")
+        self.enableIpAntiCheatSwitch = SwitchButton("关", self, IndicatorPosition.RIGHT)
+        self.enableIpAntiCheatSwitch.setOnText("开")
+        self.enableIpAntiCheatSwitch.setChecked(cfg.featureEnableIpAntiCheat.value)
+        self.enableIpAntiCheatSwitch.checkedChanged.connect(lambda v: self._updateConfig(cfg.featureEnableIpAntiCheat, v))
+        
         # 添加所有组件
         self.add(self.enableExamLabel, self.enableExamSwitch)
+        self.add(self.enableIpAntiCheatLabel, self.enableIpAntiCheatSwitch)
         self.add(self.durationLabel, self.durationBox)
         self.add(self.questionCountLabel, self.questionCountBox)
         self.add(self.passScoreLabel, self.passScoreBox)

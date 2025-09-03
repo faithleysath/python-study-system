@@ -3,9 +3,14 @@ from fastapi.responses import RedirectResponse
 
 from db import get_ongoing_exam, get_ip_bound_user
 from utils import get_client_ip
+from config import config
 
 async def exam_check_middleware(request: Request, call_next):
     """检查IP是否有进行中的考试的中间件"""
+    
+    # 如果禁用了IP防作弊,则直接跳过
+    if not config.enable_ip_anti_cheat:
+        return await call_next(request)
     
     # 获取客户端IP
     client_ip = get_client_ip(request)

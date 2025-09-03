@@ -18,7 +18,8 @@ default_json = """
     },
     "features": {
         "enable_exam": false,
-        "enable_registration": false
+        "enable_registration": false,
+        "enable_ip_anti_cheat": true
     },
     "rate_limit": {
         "max_requests": 5,

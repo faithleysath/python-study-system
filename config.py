@@ -63,6 +63,7 @@ class Config:
             features = config_data.get('features', {})
             self._enable_registration = features.get('enable_registration', True)
             self._enable_exam = features.get('enable_exam', True)
+            self._enable_ip_anti_cheat = features.get('enable_ip_anti_cheat', True)
             
             # 数据库配置
             database = config_data.get('database', {})
@@ -209,6 +210,11 @@ class Config:
     def enable_exam(self) -> bool:
         """获取是否允许参加考试"""
         return self._enable_exam
+        
+    @property
+    def enable_ip_anti_cheat(self) -> bool:
+        """获取是否启用IP防作弊"""
+        return self._enable_ip_anti_cheat
         
     @property
     def db_file(self) -> str:

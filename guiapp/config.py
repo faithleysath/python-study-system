@@ -29,6 +29,7 @@ class Config(QConfig):
     # 功能开关配置
     featureEnableRegistration = ConfigItem("features", "enable_registration", False, BoolValidator())
     featureEnableExam = ConfigItem("features", "enable_exam", False, BoolValidator())
+    featureEnableIpAntiCheat = ConfigItem("features", "enable_ip_anti_cheat", True, BoolValidator())
     
     # 数据库配置
     databaseFile = ConfigItem("database", "file", "openjudge.db")

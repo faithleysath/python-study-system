@@ -11,6 +11,7 @@ from routes import page_routes, user_routes, practice_routes, exam_routes, admin
 from middleware import exam_check_middleware
 from db import init_db
 from paths import get_base_path, get_static_path
+from config import config
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
